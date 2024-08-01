@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jane.Dev Portfolio</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Jacob Molnia</div>
+        <nav>
+            <button class="menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#resume">Resume</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="animate-on-scroll">
+            <h1>Welcome to my digital realm</h1>
+            <p>Grab a virtual coffee, stay a while. Exploring the intersection of code and creativity.</p>
+        </section>
+
+        <section id="about" class="animate-on-scroll">
+            <h2>About Me</h2>
+            <p>A passionate developer with a keen interest in creating unique digital experiences.</p>
+            <div class="skills">
+                <div class="skill">
+                    <span>JavaScript</span>
+                    <div class="skill-bar" data-skill="90"></div>
+                </div>
+                <div class="skill">
+                    <span>CSS</span>
+                    <div class="skill-bar" data-skill="85"></div>
+                </div>
+                <div class="skill">
+                    <span>HTML</span>
+                    <div class="skill-bar" data-skill="95"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="animate-on-scroll">
+            <h2>Projects</h2>
+            <div class="project-grid">
+                <div class="project-card">
+                    <h3>Neon Dreams</h3>
+                    <p>A vibrant exploration of color and animation.</p>
+                    <a href="https://github.com/username/neon-dreams" class="github-link">
+                        <i class="fab fa-github"></i> View on GitHub
+                    </a>
+                </div>
+                <div class="project-card">
+                    <h3>Pixel Pulse</h3>
+                    <p>Retro-inspired game with a modern twist.</p>
+                    <a href="https://github.com/username/pixel-pulse" class="github-link">
+                        <i class="fab fa-github"></i> View on GitHub
+                    </a>
+                </div>
+                <div class="project-card">
+                    <h3>Cyber Synthesis</h3>
+                    <p>Merging AI and human creativity.</p>
+                    <a href="https://github.com/username/cyber-synthesis" class="github-link">
+                        <i class="fab fa-github"></i> View on GitHub
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="resume" class="animate-on-scroll">
+            <h2>Resume</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h3>Senior Developer</h3>
+                    <p>TechCorp Inc. | 2020 - Present</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>Full Stack Developer</h3>
+                    <p>WebSolutions Co. | 2017 - 2020</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>Junior Developer</h3>
+                    <p>StartUp Hub | 2015 - 2017</p>
+                </div>
+            </div>
+            <a href="assets/resume.pdf" class="btn download-btn">Download Full Resume</a>
+        </section>
+    </main>
+
+    <footer>
+        <p>Made with &lt;3 and a lot of coffee</p>
+        <div class="social-links">
+            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+        </div>
+    </footer>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>
