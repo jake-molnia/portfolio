@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jane.Dev Portfolio</title>
+    <title>Jacob's Portfolio</title>
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <header>
-        <div class="logo">Jacob Molnia</div>
+        <div class="logo">Jacob Raoul Molnia</div>
         <nav>
             <button class="menu-toggle" aria-label="Toggle menu">
                 <span></span>
@@ -26,86 +26,149 @@
     </header>
 
     <main>
-        <section id="home" class="animate-on-scroll">
-            <h1>Welcome to my digital realm</h1>
-            <p>Grab a virtual coffee, stay a while. Exploring the intersection of code and creativity.</p>
+        <section id="home" class="section ">
+            <h1 id="typewriter-text"></h1>
+            <p id="subtitle" style="opacity: 0;">Grab a virtual coffee, stay a while. Exploring the intersection of code and creativity.</p>
         </section>
 
-        <section id="about" class="animate-on-scroll">
-            <h2>About Me</h2>
-            <p>A passionate developer with a keen interest in creating unique digital experiences.</p>
-            <div class="skills">
-                <div class="skill">
-                    <span>JavaScript</span>
-                    <div class="skill-bar" data-skill="90"></div>
+        <div id="content-container" style="opacity: 0;">
+            <section id="about" class="section animate-on-scroll">
+                <h2>About Me</h2>
+                <p>A passionate developer with a keen interest in creating unique digital experiences.</p>
+                <div class="skills-grid">
+                    <div class="skill-card" data-skill="JavaScript">
+                        <h3>JavaScript</h3>
+                        <div class="skill-details">
+                            <p>Proficient in modern JavaScript (ES6+), including async/await, modules, and functional programming concepts.</p>
+                            <p>Experience with frameworks like React, Vue, and Angular.</p>
+                        </div>
+                    </div>
+                    <div class="skill-card" data-skill="CSS">
+                        <h3>CSS</h3>
+                        <div class="skill-details">
+                            <p>Expert in CSS3, including Flexbox, Grid, and animations.</p>
+                            <p>Familiar with preprocessors like SASS and postprocessors like PostCSS.</p>
+                        </div>
+                    </div>
+                    <div class="skill-card" data-skill="HTML">
+                        <h3>HTML</h3>
+                        <div class="skill-details">
+                            <p>Strong knowledge of HTML5 semantics and accessibility best practices.</p>
+                            <p>Experience with templating engines like Handlebars and EJS.</p>
+                        </div>
+                    </div>
+                    <div class="skill-card" data-skill="React">
+                        <h3>React</h3>
+                        <div class="skill-details">
+                            <p>Proficient in building complex applications with React and Redux.</p>
+                            <p>Experience with React Hooks, Context API, and server-side rendering.</p>
+                        </div>
+                    </div>
+                    <div class="skill-card" data-skill="Node.js">
+                        <h3>Node.js</h3>
+                        <div class="skill-details">
+                            <p>Experienced in building RESTful APIs and microservices with Express.js.</p>
+                            <p>Familiar with serverless architectures using AWS Lambda and Azure Functions.</p>
+                        </div>
+                    </div>
+                    <div class="skill-card" data-skill="Python">
+                        <h3>Python</h3>
+                        <div class="skill-details">
+                            <p>Proficient in Python for data analysis, web scraping, and automation.</p>
+                            <p>Experience with frameworks like Django and Flask for web development.</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="skill">
-                    <span>CSS</span>
-                    <div class="skill-bar" data-skill="85"></div>
-                </div>
-                <div class="skill">
-                    <span>HTML</span>
-                    <div class="skill-bar" data-skill="95"></div>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="projects" class="animate-on-scroll">
-            <h2>Projects</h2>
-            <div class="project-grid">
-                <div class="project-card">
-                    <h3>Neon Dreams</h3>
-                    <p>A vibrant exploration of color and animation.</p>
-                    <a href="https://github.com/username/neon-dreams" class="github-link">
-                        <i class="fab fa-github"></i> View on GitHub
-                    </a>
+            <section id="projects" class="section animate-on-scroll">
+                <h2>Projects</h2>
+                <div class="project-grid">
+                    <div class="project-card" data-project="neon-dreams">
+                        <h3>Neon Dreams</h3>
+                        <p>A vibrant exploration of color and animation.</p>
+                        <div class="project-details">
+                            <p>Neon Dreams is an interactive web experience that pushes the boundaries of color theory and animation in digital spaces. Using advanced CSS and JavaScript techniques, this project creates a mesmerizing visual journey for users.</p>
+                            <p>Key features:</p>
+                            <ul>
+                                <li>Dynamic color palettes generated in real-time</li>
+                                <li>Particle system simulations</li>
+                                <li>Audio-reactive visuals</li>
+                            </ul>
+                            <a href="https://github.com/username/neon-dreams" class="github-link" target="_blank">View on GitHub</a>
+                        </div>
+                    </div>
+                    <div class="project-card" data-project="pixel-pulse">
+                        <h3>Pixel Pulse</h3>
+                        <p>Retro-inspired game with a modern twist.</p>
+                        <div class="project-details">
+                            <p>Pixel Pulse is a browser-based game that combines classic pixel art aesthetics with modern gameplay mechanics. Built with vanilla JavaScript and HTML5 Canvas, it offers a nostalgic yet fresh gaming experience.</p>
+                            <p>Key features:</p>
+                            <ul>
+                                <li>Procedurally generated levels</li>
+                                <li>Custom pixel art engine</li>
+                                <li>Local multiplayer support</li>
+                            </ul>
+                            <a href="https://github.com/username/pixel-pulse" class="github-link" target="_blank">View on GitHub</a>
+                        </div>
+                    </div>
+                    <div class="project-card" data-project="cyber-synthesis">
+                        <h3>Cyber Synthesis</h3>
+                        <p>Merging AI and human creativity.</p>
+                        <div class="project-details">
+                            <p>Cyber Synthesis is an innovative platform that leverages AI to augment human creativity in digital art creation. Using machine learning models and intuitive user interfaces, it enables artists to explore new realms of visual expression.</p>
+                            <p>Key features:</p>
+                            <ul>
+                                <li>Integration with state-of-the-art AI models</li>
+                                <li>Real-time collaboration tools</li>
+                                <li>Exportable in multiple formats for various mediums</li>
+                            </ul>
+                            <a href="https://github.com/username/cyber-synthesis" class="github-link" target="_blank">View on GitHub</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="project-card">
-                    <h3>Pixel Pulse</h3>
-                    <p>Retro-inspired game with a modern twist.</p>
-                    <a href="https://github.com/username/pixel-pulse" class="github-link">
-                        <i class="fab fa-github"></i> View on GitHub
-                    </a>
-                </div>
-                <div class="project-card">
-                    <h3>Cyber Synthesis</h3>
-                    <p>Merging AI and human creativity.</p>
-                    <a href="https://github.com/username/cyber-synthesis" class="github-link">
-                        <i class="fab fa-github"></i> View on GitHub
-                    </a>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="resume" class="animate-on-scroll">
-            <h2>Resume</h2>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <h3>Senior Developer</h3>
-                    <p>TechCorp Inc. | 2020 - Present</p>
+            <section id="resume" class="animate-on-scroll">
+                <h2>Resume</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <h3>Senior Developer</h3>
+                        <p>TechCorp Inc. | 2020 - Present</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h3>Full Stack Developer</h3>
+                        <p>WebSolutions Co. | 2017 - 2020</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h3>Junior Developer</h3>
+                        <p>StartUp Hub | 2015 - 2017</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h3>Junior Developer</h3>
+                        <p>StartUp Hub | 2015 - 2017</p>
+                    </div>
                 </div>
-                <div class="timeline-item">
-                    <h3>Full Stack Developer</h3>
-                    <p>WebSolutions Co. | 2017 - 2020</p>
-                </div>
-                <div class="timeline-item">
-                    <h3>Junior Developer</h3>
-                    <p>StartUp Hub | 2015 - 2017</p>
-                </div>
-            </div>
-            <a href="assets/resume.pdf" class="btn download-btn">Download Full Resume</a>
-        </section>
+                <a href="assets/resume.pdf" class="btn download-btn">Download Full Resume</a>
+            </section>
+        </div>
+
     </main>
 
     <footer>
         <p>Made with &lt;3 and a lot of coffee</p>
         <div class="social-links">
-            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+            <a href="https://github.com/jake-molnia" class="social-icon"><i class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/jacob-molnia/" class="social-icon"><i class="fab fa-linkedin"></i></a>
         </div>
     </footer>
 
-    <script src="scripts/main.js"></script>
+    <script src="scripts/animation.js"></script>
+<script src="scripts/skills.js"></script>
+<script src="scripts/navigation.js"></script>
+<script src="scripts/projects.js"></script>
+<script src="scripts/scrollAnimations.js"></script>
+<script src="scripts/expandableCards.js"></script>
+<script src="scripts/main.js"></script>
 </body>
 </html>
