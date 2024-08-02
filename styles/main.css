@@ -6,35 +6,171 @@
 
 :root {
     --bg-color: #1a1a1a;
-    --text-color: #f0f0f0;
-    --accent-color: #b19cd9;
-    --secondary-bg: #2a2a2a;
-    --button-border: #ffd700;
+    --text-color: #ebdbb2;
+    --accent-color-1: #fe8019;
+    --accent-color-2: #fabd2f;
+    --secondary-bg: #282828;
+    --button-color: #b8bb26;
+    --highlight-color: #83a598;
 }
 
 body {
     font-family: 'VT323', monospace;
     background-color: var(--bg-color);
     color: var(--text-color);
-    margin: 0;
-    padding: 0;
+    font-size: 18px;
     line-height: 1.6;
+    margin: 0;
+    padding: 0 5%;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 0;
 }
 
 h1, h2, h3 {
-    color: var(--accent-color);
+    color: var(--accent-color-1);
+}
+
+h1 {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    font-size: 2.5rem;
+    color: var(--accent-color-2);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+h3 {
+    font-size: 1.8rem;
+}
+
+p {
+    margin-bottom: 1.5rem;
 }
 
 a {
-    color: var(--text-color);
+    color: var(--accent-color-2);
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 a:hover {
-    color: var(--accent-color);
+    color: var(--highlight-color);
+}
+
+.btn {
+    font-size: 1.1rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    background-color: var(--button-color);
+    color: var(--bg-color);
+}
+
+.btn:hover {
+    background-color: var(--highlight-color);
+}
+
+section {
+    padding: 40px 0;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.project-card {
+    background-color: var(--secondary-bg);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(255, 107, 53, 0.2);
+}
+
+.project-card h3 {
+    font-size: 1.5rem;
+    color: var(--highlight-color);
+    margin-bottom: 0.5rem;
+}
+
+/* Original skills grid and skill card styles */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.skill-card {
+    background-color: var(--secondary-bg);
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.skill-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(177, 156, 217, 0.4);
+}
+
+.skill-card h3 {
+    margin: 0;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+.logo {
+    font-size: 4rem;
+    margin-bottom: 30px;
+    color: #fff;
+    text-shadow:
+        0 0 7px #fff,
+        0 0 10px #fff,
+        0 0 21px #fff,
+        0 0 42px var(--accent-color-1),
+        0 0 82px var(--accent-color-1),
+        0 0 92px var(--accent-color-1),
+        0 0 102px var(--accent-color-1),
+        0 0 151px var(--accent-color-1);
 }
 
 #content-container > section {
     opacity: 0;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+#content-container > section.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (min-width: 768px) {
+    body {
+        padding: 0 15%;
+    }
+    
+    .project-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    
+    .skills-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
 }

@@ -85,13 +85,11 @@
     .timeline::after {
         left: 31px;
     }
-    
     .timeline-item {
         width: 100%;
         padding-left: 70px;
         padding-right: 25px;
     }
-    
     .timeline-item::after {
         left: 21px;
     }

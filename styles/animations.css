@@ -109,3 +109,51 @@
 .slide-in {
     animation: slideInFromBottom 1s ease-out forwards;
 }
+
+@keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes strongFlicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.1; }
+}
+
+.logo .letter {
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.logo .letter.flicker {
+    animation: flicker 0.3s ease infinite;
+}
+
+.logo .letter.strong-flicker {
+    animation: strongFlicker 0.2s ease infinite;
+}
+
+.rain-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.raindrop {
+    position: absolute;
+    width: 2px;
+    height: 15px;
+    background: linear-gradient(to bottom, rgba(255, 154, 92, 0), rgba(255, 154, 92, 0.8));
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh);
+    }
+}
