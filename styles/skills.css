@@ -1,0 +1,30 @@
+
+.cards {
+  display: flex;
+}
+
+.card {
+  background: var(--bg-color);
+  min-width: 300px;
+  width: 300px;
+  min-height: 360px;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: -0.25rem 0 1rem #000;
+  transition: 0.3s;
+  --distance: -130px;
+  color: var(--text-color);
+}
+.card:not(:first-child) {
+  margin-left: var(--distance);
+}
+
+.card:hover,
+.card:focus-within {
+  transform: translateY(-1rem);
+}
+
+.card:hover ~ .card,
+.card:focus-within ~ .card {
+  transform: translateX(calc(var(--distance) * -1));
+}
