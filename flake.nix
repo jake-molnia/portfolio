@@ -1,5 +1,5 @@
 {
-  description = "Portfolio Website - Bun + Next.js 15 + Tailwind";
+  description = "portfolio website";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -23,16 +23,10 @@
           ];
 
           shellHook = ''
-            echo "🎨 Portfolio Website Development"
             echo "==============================="
             echo "Bun: $(bun --version)"
             echo "Node.js: $(node --version)"
-            echo ""
-            echo "Commands:"
-            echo "  bun dev    - Start development server"
-            echo "  bun build  - Build for production"
-            echo ""
-            
+
             # Create project structure if it doesn't exist
             mkdir -p {src/{app,components,lib},public}
             
