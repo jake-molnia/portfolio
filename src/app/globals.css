@@ -12,7 +12,7 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
-  background-color: #0a0a0a;
+  background-color: transparent; /* Let canvas handle background */
   color: #ffffff;
   line-height: 1.6;
   font-weight: 400;
@@ -74,11 +74,16 @@ body {
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
+
+#__next, [data-reactroot] {
+  position: relative;
+  z-index: 1;
+}
+
 .main-content {
   margin-left: 280px;
   padding: 48px 64px;
   min-height: 100vh;
-  background: #0a0a0a;
 }
 
 /* Custom scrollbar */
@@ -98,8 +103,6 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #525252;
 }
-
-/* Typography improvements */
 h1, h2, h3, h4, h5, h6 {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
   font-weight: 600;
@@ -113,7 +116,6 @@ p {
   line-height: 1.7;
 }
 
-/* Responsive design */
 @media (max-width: 1024px) {
   .sidebar {
     width: 260px;

@@ -1,5 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
+import { ParticleProvider } from '@/components/ParticleProvider'
+import Sidebar from '@/components/Sidebar'
 
 export const metadata: Metadata = {
   title: 'Portfolio',
@@ -14,37 +16,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {/* Sidebar - Fixed Left */}
-        <div className="sidebar">
-          <h2>Portfolio</h2>
-          <nav>
-            <a href="/" className="active">
-              <span>Home</span>
-            </a>
-            <a href="/about">
-              <span>About</span>
-            </a>
-            <a href="/projects">
-              <span>Projects</span>
-            </a>
-            <a href="/experience">
-              <span>Experience</span>
-            </a>
-            <a href="/contact">
-              <span>Contact</span>
-            </a>
-          </nav>
-          
-          {/* Bottom section with subtle accent */}
-          <div className="absolute bottom-8 left-6 right-6">
-            <div className="h-px bg-gradient-to-r from-transparent via-zinc-700 to-transparent mb-6"></div>
-          </div>
-        </div>
-        
-        {/* Main Content */}
+        <ParticleProvider>
+          <div className="sidebar">
+            {/* Sidebar */}
+            <Sidebar />
+                    </div>
+            
+            {/* Main Content */}
         <div className="main-content">
           {children}
         </div>
+        </ParticleProvider>
       </body>
     </html>
   )
