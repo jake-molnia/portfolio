@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Portfolio',
-  description: 'My Portfolio Website',
+  description: 'Modern Portfolio Website',
 }
 
 export default function RootLayout({
@@ -16,13 +16,29 @@ export default function RootLayout({
       <body>
         {/* Sidebar - Fixed Left */}
         <div className="sidebar">
-          <h2>My Portfolio</h2>
+          <h2>Portfolio</h2>
           <nav>
-            <a href="/">Home</a>
-            <a href="/about">About</a>
-            <a href="/projects">Projects</a>
-            <a href="/contact">Contact</a>
+            <a href="/" className="active">
+              <span>Home</span>
+            </a>
+            <a href="/about">
+              <span>About</span>
+            </a>
+            <a href="/projects">
+              <span>Projects</span>
+            </a>
+            <a href="/experience">
+              <span>Experience</span>
+            </a>
+            <a href="/contact">
+              <span>Contact</span>
+            </a>
           </nav>
+          
+          {/* Bottom section with subtle accent */}
+          <div className="absolute bottom-8 left-6 right-6">
+            <div className="h-px bg-gradient-to-r from-transparent via-zinc-700 to-transparent mb-6"></div>
+          </div>
         </div>
         
         {/* Main Content */}

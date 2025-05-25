@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -9,47 +11,132 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
+  background-color: #0a0a0a;
+  color: #ffffff;
+  line-height: 1.6;
+  font-weight: 400;
 }
 
 .sidebar {
   position: fixed;
   left: 0;
   top: 0;
-  width: 250px;
+  width: 280px;
   height: 100vh;
-  background-color: #374151;
-  color: white;
-  padding: 20px;
+  background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
+  border-right: 1px solid #333333;
+  padding: 32px 24px;
   z-index: 1000;
+  backdrop-filter: blur(20px);
 }
 
 .sidebar h2 {
-  margin-bottom: 30px;
+  margin-bottom: 48px;
   font-size: 20px;
-  font-weight: bold;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.02em;
 }
 
 .sidebar nav {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 8px;
 }
 
 .sidebar nav a {
-  color: white;
+  color: #a1a1aa;
   text-decoration: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  transition: background-color 0.2s;
+  padding: 12px 16px;
+  border-radius: 8px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  position: relative;
+  overflow: hidden;
 }
 
 .sidebar nav a:hover {
-  background-color: #4b5563;
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  transform: translateX(2px);
+}
+
+.sidebar nav a:active {
+  transform: translateX(2px) scale(0.98);
+}
+
+.sidebar nav a.active {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 .main-content {
-  margin-left: 250px;
-  padding: 40px;
+  margin-left: 280px;
+  padding: 48px 64px;
   min-height: 100vh;
+  background: #0a0a0a;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #525252;
+}
+
+/* Typography improvements */
+h1, h2, h3, h4, h5, h6 {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+p {
+  color: #a1a1aa;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 260px;
+  }
+  
+  .main-content {
+    margin-left: 260px;
+    padding: 32px 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .main-content {
+    margin-left: 0;
+    padding: 24px 20px;
+  }
 }
