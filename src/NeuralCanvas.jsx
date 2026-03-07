@@ -1,12 +1,17 @@
 import { useEffect, useRef } from 'react'
 
-const COUNT      = 15000
+const MAX_COUNT  = 15000
 const SPRING     = 0.0006
 const DAMPING    = 0.96
 const MOUSE_PUSH = 110
 const PUSH_FORCE = 15
 const WANDER     = 0.03
 const DIST_DECAY = 0.6
+
+// ~1 particle per 130 sq px, capped at MAX_COUNT
+function particleCount(w, h) {
+  return Math.min(MAX_COUNT, Math.max(800, Math.floor((w * h) / 130)))
+}
 
 function rand(min, max) { return Math.random() * (max - min) + min }
 
@@ -61,8 +66,9 @@ export default function NeuralCanvas({ name = 'Jacob Molnia' }) {
     }
 
     function init() {
-      const positions = sampleTextPositions(name, canvas.width, canvas.height, COUNT)
-      nodes = Array.from({ length: COUNT }, (_, i) => {
+      const count = particleCount(canvas.width, canvas.height)
+      const positions = sampleTextPositions(name, canvas.width, canvas.height, count)
+      nodes = Array.from({ length: count }, (_, i) => {
         const home = positions
           ? positions[i]
           : { x: rand(30, canvas.width - 30), y: rand(30, canvas.height - 30) }
@@ -83,13 +89,11 @@ export default function NeuralCanvas({ name = 'Jacob Molnia' }) {
       ctx.globalCompositeOperation = 'lighter'
 
       nodes.forEach(n => {
-        const spd = Math.sqrt(n.vx * n.vx + n.vy * n.vy)
         const t = n.push
         const rad = n.r * 5
         const a = t < 0.08 ? 0.15 : 0.05
 
         if (t < 0.08) {
-          // idle — white
           const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, rad)
           g.addColorStop(0,   `rgba(255,255,255,${a})`)
           g.addColorStop(0.4, `rgba(255,255,255,${(a * 0.3).toFixed(3)})`)
@@ -99,9 +103,7 @@ export default function NeuralCanvas({ name = 'Jacob Molnia' }) {
           ctx.fillStyle = g
           ctx.fill()
         } else {
-          // moving — RGB split, no brightness change, just offset
           const off = t * n.r * 4
-
           ;[
             { dx: -off, dy: -off * 0.4, col: '255,30,30' },
             { dx:  0,   dy:  off * 0.5, col: '30,255,30' },
@@ -160,6 +162,12 @@ export default function NeuralCanvas({ name = 'Jacob Molnia' }) {
       mouse.x = e.clientX - rect.left
       mouse.y = e.clientY - rect.top
     }
+    function onTouch(e) {
+      const rect = canvas.getBoundingClientRect()
+      const t = e.touches[0]
+      mouse.x = t.clientX - rect.left
+      mouse.y = t.clientY - rect.top
+    }
     function onLeave() { mouse.x = -9999; mouse.y = -9999 }
 
     const ro = new ResizeObserver(() => { resize(); init() })
@@ -169,16 +177,20 @@ export default function NeuralCanvas({ name = 'Jacob Molnia' }) {
 
     canvas.addEventListener('mousemove', onMouse)
     canvas.addEventListener('mouseleave', onLeave)
+    canvas.addEventListener('touchmove', onTouch, { passive: true })
+    canvas.addEventListener('touchend', onLeave)
 
     return () => {
       cancelAnimationFrame(raf)
       ro.disconnect()
       canvas.removeEventListener('mousemove', onMouse)
       canvas.removeEventListener('mouseleave', onLeave)
+      canvas.removeEventListener('touchmove', onTouch)
+      canvas.removeEventListener('touchend', onLeave)
     }
   }, [])
 
   return (
-  <canvas ref={ref} style={{ display: 'block', width: '100%', height: '100%' }} />
-)
+    <canvas ref={ref} style={{ display: 'block', width: '100%', height: '100%' }} />
+  )
 }

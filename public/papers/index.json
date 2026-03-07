@@ -1,7 +1,7 @@
 [
   {
     "id": "lm-feature-selection",
-    "tag": "ML · WPI 2025",
+    "tag": "MIT URTC 2025",
     "title": "LM-guided Feature Selection in Time Series Models for Small Data",
     "authors": "Phong Cao, Jacob Molnia, et al.",
     "abstract": "We propose using LLMs and RAG to guide feature selection for time series forecasting in data-scarce regimes, evaluated on European migration flows (FRONTEX, 2019–2024).",
