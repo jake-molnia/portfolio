@@ -1,0 +1,139 @@
+import { useState, useEffect } from 'react'
+import { marked } from 'marked'
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
+
+marked.setOptions({ breaks: true, gfm: true })
+
+function renderWithMath(md, slug) {
+  const blocks = []
+  const inlines = []
+
+  md = md.replace(/\$\$([\s\S]*?)\$\$/g, (_, expr) => {
+    const key = `XMATHBLOCKX${blocks.length}X`
+    try { blocks.push(katex.renderToString(expr.trim(), { displayMode: true, throwOnError: false })) }
+    catch { blocks.push(`<code>${expr}</code>`) }
+    return key
+  })
+
+  md = md.replace(/\$([^$\n]+?)\$/g, (_, expr) => {
+    const key = `XMATHINLINEX${inlines.length}X`
+    try { inlines.push(katex.renderToString(expr.trim(), { displayMode: false, throwOnError: false })) }
+    catch { inlines.push(`<code>${expr}</code>`) }
+    return key
+  })
+
+  let html = marked.parse(md)
+
+  html = html.replace(/XMATHBLOCKX(\d+)X/g, (_, i) => `<div class="math-block">${blocks[i]}</div>`)
+  html = html.replace(/XMATHINLINEX(\d+)X/g, (_, i) => inlines[i])
+
+  // Rewrite relative image src to absolute so they work regardless of URL
+  html = html.replace(/src="(?!https?:\/\/|\/)(.*?)"/g, `src="/blog/${slug}/$1"`)
+
+  return html
+}
+
+function PostView({ post, onClose }) {
+  const [html, setHtml] = useState(null)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    fetch(`/blog/${post.slug}/content.md`)
+      .then(r => {
+        if (!r.ok) throw new Error(`Could not load post (${r.status})`)
+        return r.text()
+      })
+      .then(md => setHtml(renderWithMath(md, post.slug)))
+      .catch(err => setError(err.message))
+  }, [post.slug])
+
+  return (
+    <div className="page">
+      <button onClick={onClose} style={{
+        background: 'none', border: '1px solid var(--border)', color: 'var(--muted)',
+        cursor: 'pointer', padding: '0.3rem 0.8rem', fontSize: '0.75rem',
+        fontFamily: 'Syne Mono, monospace', marginBottom: '2rem', letterSpacing: '0.08em'
+      }}>← back</button>
+
+      <div style={{ marginBottom: '2.5rem' }}>
+        <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', marginBottom: '0.5rem' }}>
+          {post.date}{post.tags?.length ? ` · ${post.tags.join(', ')}` : ''}
+        </div>
+        <h1 style={{ fontSize: '1.6rem', fontWeight: 700, lineHeight: 1.3, marginBottom: '0.6rem' }}>{post.title}</h1>
+        {post.description && <p style={{ fontSize: '0.9rem', color: 'var(--muted)', lineHeight: 1.7 }}>{post.description}</p>}
+      </div>
+
+      {error && <p style={{ color: '#f55', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{error}</p>}
+      {!error && !html && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// loading...</p>}
+      {html && <div className="blog-body" dangerouslySetInnerHTML={{ __html: html }} />}
+    </div>
+  )
+}
+
+export default function Blog() {
+  const [posts, setPosts] = useState(null)
+  const [error, setError] = useState(null)
+  const [activeSlug, setActiveSlug] = useState(() => {
+    const h = window.location.hash
+    return h.startsWith('#blog/') ? h.slice(6) : null
+  })
+
+  // Keep hash in sync
+  useEffect(() => {
+    if (activeSlug) window.location.hash = `blog/${activeSlug}`
+    else if (window.location.hash.startsWith('#blog/')) history.replaceState(null, '', ' ')
+  }, [activeSlug])
+
+  // Also respond to browser back/forward
+  useEffect(() => {
+    const onHash = () => {
+      const h = window.location.hash
+      setActiveSlug(h.startsWith('#blog/') ? h.slice(6) : null)
+    }
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
+
+  useEffect(() => {
+    fetch('/blog/index.json')
+      .then(r => {
+        if (!r.ok) throw new Error(`Could not load /blog/index.json (${r.status})`)
+        return r.json()
+      })
+      .then(setPosts)
+      .catch(err => setError(err.message))
+  }, [])
+
+  const activePost = posts?.find(p => p.slug === activeSlug) ?? null
+
+  if (activePost) return <PostView post={activePost} onClose={() => setActiveSlug(null)} />
+
+  return (
+    <div className="page">
+      <h1 className="page-title">Blog</h1>
+      <p className="page-sub">// notes & writing</p>
+
+      {error && <p style={{ color: '#f55', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{error}</p>}
+      {!error && !posts && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// loading...</p>}
+      {posts?.length === 0 && (
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '2rem', color: 'var(--muted)', fontSize: '0.85rem', fontFamily: 'Syne Mono, monospace' }}>
+          // no posts yet — add entries to public/blog/index.json
+        </div>
+      )}
+
+      {posts?.length > 0 && (
+        <div className="paper-list">
+          {posts.map(p => (
+            <div key={p.slug} className="paper-item" onClick={() => setActiveSlug(p.slug)}>
+              <div className="paper-meta">{p.date}{p.tags?.length ? ` · ${p.tags.join(', ')}` : ''}</div>
+              <div className="paper-title">{p.title}</div>
+              {p.description && <p className="paper-abstract">{p.description}</p>}
+              <div className="paper-read">Read post →</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

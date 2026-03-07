@@ -2,8 +2,9 @@ import { useState } from 'react'
 import NeuralCanvas from './NeuralCanvas'
 import Papers from './Papers'
 import Resume from './Resume'
+import Blog from './Blog'
 
-const TABS = ['Home', 'Research', 'Resume']
+const TABS = ['Home', 'Research', 'Blog', 'Resume']
 
 export default function App() {
   const [tab, setTab] = useState('Home')
@@ -41,6 +42,8 @@ export default function App() {
 
       {tab === 'Research' && <Papers />}
       {tab === 'Resume' && <Resume />}
+      {tab === 'Blog' && <Blog />}
+
     </>
   )
 }
