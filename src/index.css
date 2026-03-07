@@ -15,6 +15,12 @@
   --muted2: #888;
 }
 
+@font-face {
+  font-family: 'Violet Sans';
+  src: url('/fonts/VioletSans-Regular.woff2') format('woff2');
+  font-weight: 800;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body, #root { height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
 body { scrollbar-width: thin; scrollbar-color: #1c1c1c transparent; }
@@ -42,8 +48,8 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
 .nav-tab.active { color: var(--text); }
 
 .hero { position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.hero-content { position: relative; z-index: 10; text-align: center; animation: fadeUp 1.4s ease forwards; }
+.hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+.hero-content { position: relative; top: 10%; z-index: 10; text-align: center; animation: fadeUp 1.4s ease forwards; }
 .hero-name { font-family: 'Syne', sans-serif; font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--text); }
 .hero-role { margin-top: 1.1rem; font-family: 'Syne Mono', monospace; font-size: 0.78rem; letter-spacing: 0.2em; color: var(--muted2); }
 .hero-bio { margin-top: 1.6rem; max-width: 420px; font-size: 0.9rem; color: var(--muted); line-height: 1.8; font-weight: 300; }
@@ -98,3 +104,4 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+

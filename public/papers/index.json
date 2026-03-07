@@ -1,0 +1,4 @@
+[
+  { "id": "paper1", "title": "My Paper", "authors": "J. Molnia", "tag": "MLSys 2024", "file": "paper1.tex" },
+  { "id": "paper2", "title": "Other Paper", "authors": "J. Molnia", "tag": "MIT URTC", "file": "paper2.tex" }
+]

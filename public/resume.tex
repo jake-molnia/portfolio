@@ -1,0 +1,308 @@
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{fontawesome5}
+\usepackage{multicol}
+\usepackage{graphicx}%\setmainfont{Times New Roman}
+\setlength{\multicolsep}{-3.0pt}
+\setlength{\columnsep}{-1pt}
+\input{glyphtounicode}
+
+\RequirePackage{tikz}
+\RequirePackage{xcolor}
+
+\definecolor{cvblue}{HTML}{0E5484}
+\definecolor{black}{HTML}{130810}
+\definecolor{darkcolor}{HTML}{0F4539}
+\definecolor{cvgreen}{HTML}{3BD80D}
+\definecolor{taggreen}{HTML}{00E278}
+\definecolor{SlateGrey}{HTML}{2E2E2E}
+\definecolor{LightGrey}{HTML}{666666}
+\colorlet{name}{black}
+\colorlet{tagline}{darkcolor}
+\colorlet{heading}{darkcolor}
+\colorlet{headingrule}{cvblue}
+\colorlet{accent}{darkcolor}
+\colorlet{emphasis}{SlateGrey}
+\colorlet{body}{LightGrey}
+
+%----------FONT OPTIONS----------
+% sans-serif
+% \usepackage[sfdefault]{FiraSans}
+% \usepackage[sfdefault]{roboto}
+% \usepackage[sfdefault]{noto-sans}
+% \usepackage[default]{sourcesanspro}
+
+% \usepackage[T1]{fontenc}
+% \usepackage[T1]{fontenc}
+% \usepackage{cochineal}
+% \usepackage{fourier}
+
+% \usepackage{fontspec}
+% \usepackage{polyglossia}
+% \setmainlanguage{german}
+% \setmainfont{Times New Roman}
+
+% serif
+\usepackage{CormorantGaramond}
+\usepackage{charter}
+
+% \pagestyle{fancy}
+% \fancyhf{}  % clear all header and footer fields
+% \fancyfoot{}https://www.overleaf.com/project/65d7f52f347239d208792043
+% \renewcommand{\headrulewidth}{0pt}
+% \renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.6in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1.19in}
+\addtolength{\topmargin}{-.7in}
+\addtolength{\textheight}{1.4in}
+\urlstyle{same}
+
+\definecolor{airforceblue}{rgb}{0.36, 0.54, 0.66}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large\bfseries
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-1pt}}
+  }
+}
+
+\newcommand{\classesList}[4]{
+    \item\small{
+        {#1 #2 #3 #4 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{1.0\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{\large#1} & \textbf{\small #2} \\
+      \textit{\large#3} & \textit{\small #4} \\
+      
+    \end{tabular*}\vspace{-7pt}
+}
+
+
+\newcommand{\resumeSingleSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{1.0\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{\large#1} & \textbf{\small #2} \\
+      
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{1.001\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & \textbf{\small #2}\\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemi{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.0in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.1in]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+\newcommand\sbullet[1][.5]{\mathbin{\vcenter{\hbox{\scalebox{#1}{$\bullet$}}}}}
+
+%-------------------------------------------\usepackage{fontspec}
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+%----------HEADING----------
+
+
+\begin{center}
+    {\huge Jacob Raoul Molnia} \\ \vspace{2pt} 
+    {+1 (703) 398 4682} ~ 
+    \small{-}
+    %\href{[url to portfolio]}{\color{blue}{Portfolio}} ~ 
+    %\small{-}
+    \href{mailto:jmolnia04@gmail.com}{\color{blue}{jacob@molnia.net}} ~ 
+    \small{-}
+    \href{https://www.linkedin.com/in/jacob-molnia/}{ \color{blue}{linkedin.com/in/jacob-molnia}}  ~
+    \small{-}
+    \href{https://github.com/jake-molnia}{ \color{blue}{github.com/jake-molnia}} ~
+    \vspace{-7pt}
+\end{center}
+
+%-----------EDUCATION-----------
+\section{\color{airforceblue}EDUCATION}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Worcester Polytechnic Institute}{Worcester, MA, USA}
+      {Computer Science (BS/MS); Mathematical Science (BS)}{Aug 2023 - May 2027}
+      \resumeItemListStart
+      \resumeItem{Relevant Coursework: Object-Oriented Programming, Systems Programming, Discrete Optimization, Combinatorics, Linear Algebra, Ordinary Differential Equations, Topology, Real Analysis}
+      \resumeItem{Relevant Graduate Coursework: Algorithms, Artificial Intelligence, Operating Systems, Machine Learning, ML DevOps, Deep Learning, Foundations of Computer Science}
+    \resumeItemListEnd
+    
+    \vspace{-4pt}
+     \resumeSubheading
+        {Privates Gymnasium Huber (German Primary School)}{Munich, Bav, DE}
+        {Abitur Degree - Bavaria (German Pre-College Diploma)}{Sept 2014 - June 2022}
+  \resumeSubHeadingListEnd
+  \vspace{-10pt}
+
+%-----------PROGRAMMING SKILLS-----------
+\section{\color{airforceblue}TECHNICAL SKILLS}
+ \begin{itemize}[leftmargin=0in, label={}]
+    \small{\item{
+     \textbf{\normalsize{Programming Languages:}}{ \normalsize{C/C++, Python, golang, Rust }} \\
+      \vspace{1.2pt}
+      
+     \textbf{\normalsize{Libraries and Tools:}}{ \normalsize{git, torch, tensorflow, wandb, huggingface, nix, grafana, prometheus, uv, pandas, numpy, k3s, docker }} \\
+      \vspace{1.2pt}
+      
+     %\textbf{\normalsize{ML Architectures:}}{ \normalsize{CNN, YOLO, Transformers(BERT, LSTM), RAFT}}
+
+     % copy and paste above textbf block to add more 
+     }}
+ \end{itemize}
+ \vspace{-16pt}
+
+%-----------Additional SKILLS-----------
+ \section{\color{airforceblue}ADDITIONAL SKILLS}
+ \begin{itemize}[leftmargin=0in, label={}]
+    \small{\item{
+     \textbf{\normalsize{Languages:}}{ \normalsize{German (native), English (native), Latin (Basic)}} \\
+      \vspace{1.2pt}
+      
+     \textbf{\normalsize{Software:}}{ \normalsize{KICAD, MATLAB, Overleaf, proxmox }} \\
+      \vspace{1.2pt}
+      
+     %\textbf{\normalsize{ML Architectures:}}{ \normalsize{CNN, YOLO, Transformers(BERT, LSTM), RAFT}}
+
+     % copy and paste above textbf block to add more 
+     }}
+ \end{itemize}
+ \vspace{-16pt}
+%-----------EXPERIENCE-----------
+\section{\color{airforceblue}WORK EXPERIENCE}
+  \resumeSubHeadingListStart
+    % TODO: add paffenroth and murai work! 
+    \resumeSubheading
+      {Research Assistant}{Worcester, MA} 
+      {Professor Murai, Worcester Polytechnic Institute}{May 2025 - \textit{Present}}
+      \resumeItemListStart
+            \resumeItem{\normalsize{ Active research with a focus on TSFM, LLM-lasso, RAG, Prefix-tuning}}
+            \resumeItem{\normalsize{ Developed useful skills in paper writing and common research processes. }}
+      \resumeItemListEnd
+
+      \resumeSubheading
+      {Research Assistant}{Worcester, MA} 
+      {Professor Paffenroth, Worcester Polytechnic Institute}{May 2025 - \textit{Present}}
+      \resumeItemListStart
+            \resumeItem{\normalsize{Active research with focus on Dynamical Systems, Reinfocement learning, RNNs and traditional MLPs}}
+      \resumeItemListEnd
+
+  
+    \resumeSubheading
+      {Undergraduate Research Assistant}{Worcester, MA} 
+      {TMS Lab, Worcester Polytechnic Institute}{May 2024 - January 2025}
+      \resumeItemListStart
+            \resumeItem{\normalsize{Consolidated multiple paper-specific software toolkits into unified MATLAB framework, improving maintainability and scalability.}}
+            \resumeItem{\normalsize{Implemented comprehensive unit testing framework for CI/CD and robust software development.}}  
+            \resumeItem{\normalsize{Applied unit testing methodologies, version control systems, and object-oriented programming techniques.}}  
+      \resumeItemListEnd
+      
+    \resumeSubheading
+      {Academic Tutor \& Teaching Assistant \& ARC Resource Coordinator}{Worcester, MA}
+      {Worcester Polytechnic Institute}{May 2024 - \textit{Present}}
+      \resumeItemListStart
+            \resumeItem{\normalsize{Provide expert tutoring in advanced mathematics and computer science subjects through the Academic Resource Center.}}
+            \resumeItem{\normalsize{Serve as a Teaching Assistant in the Computer Science Department, conducting office hours, leading lab sessions, and grading assignments for various courses, such as Software Security Engineering and AI. Creating and overseeing homework assignments for AI.}}
+      \resumeItemListEnd 
+    
+  \resumeSubHeadingListEnd
+\vspace{-12pt}
+
+ %-----------PROJECTS-----------
+\section{\color{airforceblue}PROJECTS/COURSES}    
+    \resumeItemListStart
+        \vspace{0.5pt}
+        % TODO: Add projects here
+        \resumeItem{\normalsize{\textbf{Traceface}, Real-time facial recognition system leveraging YOLOv8 and DeepFace. Implemented parallel processing architecture achieving 15+ FPS with 97.35\% accuracy on LFW dataset, integrated with ChromaDB for efficient embedding storage.}}
+        \vspace{-5pt}
+        
+        \resumeItem{\normalsize{\textbf{Email Priority Ranking with Neural Networks}, Developed multivariate email prioritization system using CNN ensemble and SimCSE-BERT models to classify emails into priority tiers based on sentiment and urgency scoring. Implemented auto-labeling pipeline with BART-MNLI and VADER sentiment analysis on 500K Enron emails dataset. Achieved modular architecture combining urgency detection (IT tickets) and sentiment analysis (Amazon reviews) with tunable weighting parameters.}}
+\vspace{-5pt}
+
+        % copy and paste above resumeItem block to add more 
+        
+    \resumeItemListEnd  
+   
+ \vspace{-12pt}
+%
+
+%-----------Publications---------------
+%\section{\color{airforceblue}PUBLICATIONS}
+    
+%  \resumeItemListStart
+%    \resumeItem{\normalsize{Add Publication details here}}\href{[url link to publication]}{\color{blue}\underline{Link}}
+%    \vspace{-5pt}
+    
+%    \resumeItem{\normalsize{Add Publication details here}}\href{[url link to publication]}{\color{blue}\underline{Link}}
+%    \vspace{-5pt}
+
+    % copy and paste above resumeItem block to add more 
+    
+%  \resumeItemListEnd 
+      
+%\vspace{-8pt}
+
+%-----------Honours---------------
+\section{\color{airforceblue}HONOURS}
+    
+      \resumeItemListStart
+        \resumeItem{\normalsize{\textbf{Deans List} Worcester Polytechnic Institute }} 
+        \vspace{-5pt}
+        \resumeItem{\normalsize{\textbf{Best PLA Computer Science} Worcester Polytechnic Institute - 2024/2025}} 
+        \vspace{-5pt}
+        
+        % copy and paste above resumeItem block to add more 
+      \resumeItemListEnd 
+      
+\vspace{-12pt}
+
+\end{document}
