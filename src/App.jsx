@@ -93,8 +93,8 @@ export default function App() {
       )}
 
       {tab === 'Research' && <Papers />}
-      {tab === 'Resume'   && <Resume />}
       {tab === 'Blog'     && <Blog />}
+      {tab === 'Resume'   && <Resume />}
     </>
   )
 }
