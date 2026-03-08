@@ -64,21 +64,6 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Mobile liquid-glass bottom nav */}
-      <nav className="mobile-nav" style={{ '--active-idx': activeIdx }}>
-        <div className="mobile-nav-pill" aria-hidden="true" />
-        {TABS.map(t => (
-          <button
-            key={t}
-            className={`mobile-nav-btn ${tab === t ? 'active' : ''}`}
-            onClick={() => setTab(t)}
-          >
-            <span className="mobile-nav-icon">{TAB_ICONS[t]}</span>
-            <span className="mobile-nav-label">{t}</span>
-          </button>
-        ))}
-      </nav>
-
       {tab === 'Home' && (
         <div className="hero">
           <NeuralCanvas name="Jacob Molnia" />
