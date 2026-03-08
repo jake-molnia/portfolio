@@ -3,8 +3,8 @@ import { useEffect, useRef } from 'react'
 const MAX_COUNT  = 15000
 const SPRING     = 0.0006
 const DAMPING    = 0.96
-const MOUSE_PUSH = 110
-const PUSH_FORCE = 15
+const MOUSE_PUSH = 60
+const PUSH_FORCE = 3
 const WANDER     = 0.03
 const DIST_DECAY = 0.6
 
