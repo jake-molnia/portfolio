@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
 
-const MAX_COUNT  = 15000
 const SPRING     = 0.0006
 const DAMPING    = 0.96
 const MOUSE_PUSH = 60
@@ -8,9 +7,14 @@ const PUSH_FORCE = 3
 const WANDER     = 0.03
 const DIST_DECAY = 0.6
 
-// ~1 particle per 130 sq px, capped at MAX_COUNT
 function particleCount(w, h) {
-  return Math.min(MAX_COUNT, Math.max(800, Math.floor((w * h) / 130)))
+  const area = w * h
+  const isMobile = w < 768
+  // mobile: 1 per 500px², desktop: 1 per 130px², both capped
+  const divisor = isMobile ? 500 : 130
+  const max     = isMobile ? 1000 : 15000
+  const min     = isMobile ? 200 : 800
+  return Math.min(max, Math.max(min, Math.floor(area / divisor)))
 }
 
 function rand(min, max) { return Math.random() * (max - min) + min }
