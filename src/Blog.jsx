@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { marked } from 'marked'
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
+import { cdn } from './cdn'
 
 marked.setOptions({ breaks: true, gfm: true })
 
@@ -24,13 +25,9 @@ function renderWithMath(md, slug) {
   })
 
   let html = marked.parse(md)
-
   html = html.replace(/XMATHBLOCKX(\d+)X/g, (_, i) => `<div class="math-block">${blocks[i]}</div>`)
   html = html.replace(/XMATHINLINEX(\d+)X/g, (_, i) => inlines[i])
-
-  // Rewrite relative image src to absolute so they work regardless of URL
-  html = html.replace(/src="(?!https?:\/\/|\/)(.*?)"/g, `src="/blog/${slug}/$1"`)
-
+  html = html.replace(/src="(?!https?:\/\/|\/)(.*?)"/g, `src="${cdn(`blog/${slug}/$1`)}"`)
   return html
 }
 
@@ -39,7 +36,7 @@ function PostView({ post, onClose }) {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetch(`/blog/${post.slug}/content.md`)
+    fetch(cdn(`blog/${post.slug}/content.md`))
       .then(r => {
         if (!r.ok) throw new Error(`Could not load post (${r.status})`)
         return r.text()
@@ -79,13 +76,11 @@ export default function Blog() {
     return h.startsWith('#blog/') ? h.slice(6) : null
   })
 
-  // Keep hash in sync
   useEffect(() => {
     if (activeSlug) window.location.hash = `blog/${activeSlug}`
     else if (window.location.hash.startsWith('#blog/')) history.replaceState(null, '', ' ')
   }, [activeSlug])
 
-  // Also respond to browser back/forward
   useEffect(() => {
     const onHash = () => {
       const h = window.location.hash
@@ -96,9 +91,9 @@ export default function Blog() {
   }, [])
 
   useEffect(() => {
-    fetch('/blog/index.json')
+    fetch(cdn('blog/index.json'))
       .then(r => {
-        if (!r.ok) throw new Error(`Could not load /blog/index.json (${r.status})`)
+        if (!r.ok) throw new Error(`Could not load blog/index.json (${r.status})`)
         return r.json()
       })
       .then(setPosts)
@@ -106,7 +101,6 @@ export default function Blog() {
   }, [])
 
   const activePost = posts?.find(p => p.slug === activeSlug) ?? null
-
   if (activePost) return <PostView post={activePost} onClose={() => setActiveSlug(null)} />
 
   return (
@@ -118,10 +112,9 @@ export default function Blog() {
       {!error && !posts && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// loading...</p>}
       {posts?.length === 0 && (
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: '2rem', color: 'var(--muted)', fontSize: '0.85rem', fontFamily: 'Syne Mono, monospace' }}>
-          // no posts yet — add entries to public/blog/index.json
+          // no posts yet
         </div>
       )}
-
       {posts?.length > 0 && (
         <div className="paper-list">
           {posts.map(p => (

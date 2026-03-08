@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { marked } from 'marked'
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
+import { cdn } from './cdn'
 
 marked.setOptions({ breaks: true, gfm: true })
 
@@ -34,7 +35,7 @@ function PaperView({ paper, onClose }) {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetch(`/papers/${paper.id}/content.md`)
+    fetch(cdn(`papers/${paper.id}/content.md`))
       .then(r => {
         if (!r.ok) throw new Error(`Could not load content (${r.status})`)
         return r.text()
@@ -52,11 +53,7 @@ function PaperView({ paper, onClose }) {
           fontFamily: 'Syne Mono, monospace', letterSpacing: '0.08em'
         }}>← back</button>
         {paper.pdf && (
-          <a
-            href={`/papers/${paper.id}/${paper.pdf}`}
-            download
-            className="btn btn-primary"
-          >↓ Download PDF</a>
+          <a href={cdn(`papers/${paper.id}/${paper.pdf}`)} target="_blank" rel="noreferrer" className="btn btn-primary">↓ Download PDF</a>
         )}
       </div>
 
@@ -96,9 +93,9 @@ export default function Papers() {
   }, [])
 
   useEffect(() => {
-    fetch('/papers/index.json')
+    fetch(cdn('papers/index.json'))
       .then(r => {
-        if (!r.ok) throw new Error(`Could not load /papers/index.json (${r.status})`)
+        if (!r.ok) throw new Error(`Could not load papers/index.json (${r.status})`)
         return r.json()
       })
       .then(setPapers)
@@ -117,10 +114,9 @@ export default function Papers() {
       {!error && !papers && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// loading...</p>}
       {papers?.length === 0 && (
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: '2rem', color: 'var(--muted)', fontSize: '0.85rem', fontFamily: 'Syne Mono, monospace' }}>
-          // no papers yet — add entries to public/papers/index.json
+          // no papers yet
         </div>
       )}
-
       {papers?.length > 0 && (
         <div className="paper-list">
           {papers.map(p => (
@@ -131,14 +127,6 @@ export default function Papers() {
               {p.abstract && <p className="paper-abstract">{p.abstract}</p>}
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', alignItems: 'center' }}>
                 <span className="paper-read">Read paper →</span>
-                {p.pdf && (
-                  <a
-                    href={`/papers/${p.id}/${p.pdf}`}
-                    download
-                    onClick={e => e.stopPropagation()}
-                    style={{ fontSize: '0.72rem', fontFamily: 'Syne Mono, monospace', letterSpacing: '0.1em', color: 'var(--muted)', textDecoration: 'none' }}
-                  >↓ PDF</a>
-                )}
               </div>
             </div>
           ))}

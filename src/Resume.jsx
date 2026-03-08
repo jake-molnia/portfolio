@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
+import { cdn } from './cdn'
 
 function ResumeView({ data }) {
   return (
     <div className="resume-wrapper">
-      {/* Left column */}
       <div>
         <div className="r-name">{data.name}</div>
         <div className="r-contact" style={{ marginTop: '0.75rem' }}>
@@ -41,7 +41,6 @@ function ResumeView({ data }) {
         )}
       </div>
 
-      {/* Right column */}
       <div>
         {data.education?.length > 0 && (
           <div className="rs">
@@ -98,20 +97,19 @@ function ResumeView({ data }) {
 }
 
 export default function Resume() {
-  const [data, setData]       = useState(null)
+  const [data, setData]     = useState(null)
   const [missing, setMissing] = useState(false)
   const [hasPdf, setHasPdf]   = useState(false)
 
   useEffect(() => {
-    fetch('/resume/resume.json')
+    fetch(cdn('resume/resume.json'))
       .then(r => { if (!r.ok) throw new Error(); return r.json() })
       .then(setData)
       .catch(() => setMissing(true))
   }, [])
 
   useEffect(() => {
-    // Check if a PDF is available without downloading it
-    fetch('/resume/resume.pdf', { method: 'HEAD' })
+    fetch(cdn('resume/resume.pdf'), { method: 'HEAD' })
       .then(r => setHasPdf(r.ok))
       .catch(() => setHasPdf(false))
   }, [])
@@ -124,16 +122,11 @@ export default function Resume() {
           <p className="page-sub" style={{ marginBottom: 0 }}>// curriculum vitae</p>
         </div>
         {hasPdf && (
-          <a href="/resume/resume.pdf" download className="btn btn-primary">↓ Download PDF</a>
+          <a href={cdn('resume/resume.pdf')} target="_blank" rel="noreferrer" className="btn btn-primary">↓ Download PDF</a>
         )}
       </div>
-
-      {!data && !missing && (
-        <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// loading...</p>
-      )}
-      {missing && (
-        <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// no resume found — add resume.json to public/</p>
-      )}
+      {!data && !missing && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// loading...</p>}
+      {missing && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// no resume found — add resume.json to R2 bucket</p>}
       {data && <ResumeView data={data} />}
     </div>
   )
