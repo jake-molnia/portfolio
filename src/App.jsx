@@ -4,7 +4,7 @@ import Papers from './Papers'
 import Resume from './Resume'
 import Blog from './Blog'
 
-const TABS = ['Home', 'Research', 'Resume', 'Blog']
+const TABS = ['Home', 'Research', 'Blog', 'Resume']
 
 const TAB_ICONS = {
   Home: (
