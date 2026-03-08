@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { parseLatexResume } from './parseResume'
 
 function ResumeView({ data }) {
   return (
@@ -8,16 +7,16 @@ function ResumeView({ data }) {
       <div>
         <div className="r-name">{data.name}</div>
         <div className="r-contact" style={{ marginTop: '0.75rem' }}>
-          {data.contact.phone && <span>{data.contact.phone}</span>}
-          {data.contact.email && <a href={`mailto:${data.contact.email}`}>{data.contact.email}</a>}
+          {data.contact.phone    && <span>{data.contact.phone}</span>}
+          {data.contact.email    && <a href={`mailto:${data.contact.email}`}>{data.contact.email}</a>}
           {data.contact.linkedin && <a href={`https://${data.contact.linkedin}`} target="_blank" rel="noreferrer">{data.contact.linkedin}</a>}
-          {data.contact.github && <a href={`https://${data.contact.github}`} target="_blank" rel="noreferrer">{data.contact.github}</a>}
+          {data.contact.github   && <a href={`https://${data.contact.github}`}   target="_blank" rel="noreferrer">{data.contact.github}</a>}
         </div>
 
-        {(data.technicalSkills?.length > 0 || data.additionalSkills?.length > 0) && (
+        {data.skills?.length > 0 && (
           <div style={{ marginTop: '2rem' }}>
             <div className="rs-label">Skills</div>
-            {[...(data.technicalSkills || []), ...(data.additionalSkills || [])].map((s, i) => (
+            {data.skills.map((s, i) => (
               <div key={i} style={{ marginBottom: '0.6rem' }}>
                 <div style={{ fontSize: '0.68rem', color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', marginBottom: '0.25rem' }}>{s.label}</div>
                 <div className="skills-grid">
@@ -99,30 +98,41 @@ function ResumeView({ data }) {
 }
 
 export default function Resume() {
-  const [data, setData] = useState(null)
+  const [data, setData]       = useState(null)
   const [missing, setMissing] = useState(false)
+  const [hasPdf, setHasPdf]   = useState(false)
 
   useEffect(() => {
-    fetch('/resume.tex')
-      .then(r => { if (!r.ok) throw new Error(); return r.text() })
-      .then(tex => {
-        const parsed = parseLatexResume(tex)
-        parsed.name ? setData(parsed) : setMissing(true)
-      })
+    fetch('/resume/resume.json')
+      .then(r => { if (!r.ok) throw new Error(); return r.json() })
+      .then(setData)
       .catch(() => setMissing(true))
+  }, [])
+
+  useEffect(() => {
+    // Check if a PDF is available without downloading it
+    fetch('/resume/resume.pdf', { method: 'HEAD' })
+      .then(r => setHasPdf(r.ok))
+      .catch(() => setHasPdf(false))
   }, [])
 
   return (
     <div className="page">
-      <div style={{ marginBottom: '2.75rem' }}>
-        <h1 className="page-title">Résumé</h1>
-        <p className="page-sub">// curriculum vitae</p>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '2.75rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h1 className="page-title">Résumé</h1>
+          <p className="page-sub" style={{ marginBottom: 0 }}>// curriculum vitae</p>
+        </div>
+        {hasPdf && (
+          <a href="/resume/resume.pdf" download className="btn btn-primary">↓ Download PDF</a>
+        )}
       </div>
+
       {!data && !missing && (
         <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// loading...</p>
       )}
       {missing && (
-        <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// no resume found — add resume.tex to public/</p>
+        <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// no resume found — add resume.json to public/</p>
       )}
       {data && <ResumeView data={data} />}
     </div>
