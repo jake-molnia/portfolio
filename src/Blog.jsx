@@ -1,35 +1,6 @@
 import { useState, useEffect } from 'react'
-import { marked } from 'marked'
-import katex from 'katex'
-import 'katex/dist/katex.min.css'
+import { renderWithMath } from './renderWithMath'
 import { cdn } from './cdn'
-
-marked.setOptions({ breaks: true, gfm: true })
-
-function renderWithMath(md, slug) {
-  const blocks = []
-  const inlines = []
-
-  md = md.replace(/\$\$([\s\S]*?)\$\$/g, (_, expr) => {
-    const key = `XMATHBLOCKX${blocks.length}X`
-    try { blocks.push(katex.renderToString(expr.trim(), { displayMode: true, throwOnError: false })) }
-    catch { blocks.push(`<code>${expr}</code>`) }
-    return key
-  })
-
-  md = md.replace(/\$([^$\n]+?)\$/g, (_, expr) => {
-    const key = `XMATHINLINEX${inlines.length}X`
-    try { inlines.push(katex.renderToString(expr.trim(), { displayMode: false, throwOnError: false })) }
-    catch { inlines.push(`<code>${expr}</code>`) }
-    return key
-  })
-
-  let html = marked.parse(md)
-  html = html.replace(/XMATHBLOCKX(\d+)X/g, (_, i) => `<div class="math-block">${blocks[i]}</div>`)
-  html = html.replace(/XMATHINLINEX(\d+)X/g, (_, i) => inlines[i])
-  html = html.replace(/src="(?!https?:\/\/|\/)(.*?)"/g, `src="${cdn(`blog/${slug}/$1`)}"`)
-  return html
-}
 
 function PostView({ post, onClose }) {
   const [html, setHtml] = useState(null)
@@ -41,7 +12,9 @@ function PostView({ post, onClose }) {
         if (!r.ok) throw new Error(`Could not load post (${r.status})`)
         return r.text()
       })
-      .then(md => setHtml(renderWithMath(md, post.slug)))
+      .then(md => setHtml(renderWithMath(md, {
+        rewriteImages: (path) => cdn(`blog/${post.slug}/${path}`)
+      })))
       .catch(err => setError(err.message))
   }, [post.slug])
 
