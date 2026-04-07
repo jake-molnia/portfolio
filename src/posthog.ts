@@ -21,6 +21,7 @@ if (key) {
       api_host: host || 'https://us.i.posthog.com',
       autocapture: false,
       capture_pageview: false,
+      capture_pageleave: true,
       persistence: 'localStorage',
     })
     instance = posthog
