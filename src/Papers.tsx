@@ -3,36 +3,46 @@ import { marked } from 'marked'
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { cdn } from './cdn'
+import { capture } from './posthog'
 
 marked.setOptions({ breaks: true, gfm: true })
 
-function renderWithMath(md) {
-  const blocks = []
-  const inlines = []
+interface Paper {
+  id: string
+  title: string
+  authors: string
+  tag: string
+  abstract?: string
+  pdf?: string
+}
 
-  md = md.replace(/\$\$([\s\S]*?)\$\$/g, (_, expr) => {
+function renderWithMath(md: string): string {
+  const blocks: string[] = []
+  const inlines: string[] = []
+
+  md = md.replace(/\$\$([\s\S]*?)\$\$/g, (_, expr: string) => {
     const key = `XMATHBLOCKX${blocks.length}X`
     try { blocks.push(katex.renderToString(expr.trim(), { displayMode: true, throwOnError: false })) }
     catch { blocks.push(`<code>${expr}</code>`) }
     return key
   })
 
-  md = md.replace(/\$([^$\n]+?)\$/g, (_, expr) => {
+  md = md.replace(/\$([^$\n]+?)\$/g, (_, expr: string) => {
     const key = `XMATHINLINEX${inlines.length}X`
     try { inlines.push(katex.renderToString(expr.trim(), { displayMode: false, throwOnError: false })) }
     catch { inlines.push(`<code>${expr}</code>`) }
     return key
   })
 
-  let html = marked.parse(md)
-  html = html.replace(/XMATHBLOCKX(\d+)X/g, (_, i) => `<div class="math-block">${blocks[i]}</div>`)
-  html = html.replace(/XMATHINLINEX(\d+)X/g, (_, i) => inlines[i])
+  let html = marked.parse(md) as string
+  html = html.replace(/XMATHBLOCKX(\d+)X/g, (_, i: string) => `<div class="math-block">${blocks[+i]}</div>`)
+  html = html.replace(/XMATHINLINEX(\d+)X/g, (_, i: string) => inlines[+i])
   return html
 }
 
-function PaperView({ paper, onClose }) {
-  const [html, setHtml] = useState(null)
-  const [error, setError] = useState(null)
+function PaperView({ paper, onClose }: { paper: Paper; onClose: () => void }) {
+  const [html, setHtml] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetch(cdn(`papers/${paper.id}/content.md`))
@@ -41,7 +51,7 @@ function PaperView({ paper, onClose }) {
         return r.text()
       })
       .then(md => setHtml(renderWithMath(md)))
-      .catch(err => setError(err.message))
+      .catch((err: Error) => setError(err.message))
   }, [paper.id])
 
   return (
@@ -53,7 +63,7 @@ function PaperView({ paper, onClose }) {
           fontFamily: 'Syne Mono, monospace', letterSpacing: '0.08em'
         }}>← back</button>
         {paper.pdf && (
-          <a href={cdn(`papers/${paper.id}/${paper.pdf}`)} target="_blank" rel="noreferrer" className="btn btn-primary">↓ Download PDF</a>
+          <a href={cdn(`papers/${paper.id}/${paper.pdf}`)} target="_blank" rel="noreferrer" className="btn btn-primary" onClick={() => capture('paper pdf downloaded', { paper_id: paper.id, title: paper.title })}>↓ Download PDF</a>
         )}
       </div>
 
@@ -71,9 +81,9 @@ function PaperView({ paper, onClose }) {
 }
 
 export default function Papers() {
-  const [papers, setPapers] = useState(null)
-  const [error, setError] = useState(null)
-  const [activeId, setActiveId] = useState(() => {
+  const [papers, setPapers] = useState<Paper[] | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [activeId, setActiveId] = useState<string | null>(() => {
     const h = window.location.hash
     return h.startsWith('#paper/') ? h.slice(7) : null
   })
@@ -99,11 +109,11 @@ export default function Papers() {
         return r.json()
       })
       .then(setPapers)
-      .catch(err => setError(err.message))
+      .catch((err: Error) => setError(err.message))
   }, [])
 
   const activePaper = papers?.find(p => p.id === activeId) ?? null
-  if (activePaper) return <PaperView paper={activePaper} onClose={() => setActiveId(null)} />
+  if (activePaper) return <PaperView paper={activePaper} onClose={() => { capture('paper closed', { paper_id: activePaper.id, title: activePaper.title }); setActiveId(null) }} />
 
   return (
     <div className="page">
@@ -117,10 +127,10 @@ export default function Papers() {
           // no papers yet
         </div>
       )}
-      {papers?.length > 0 && (
+      {papers && papers.length > 0 && (
         <div className="paper-list">
           {papers.map(p => (
-            <div key={p.id} className="paper-item" onClick={() => setActiveId(p.id)}>
+            <div key={p.id} className="paper-item" onClick={() => { capture('paper opened', { paper_id: p.id, title: p.title, tag: p.tag }); setActiveId(p.id) }}>
               <div className="paper-meta">{p.tag}</div>
               <div className="paper-title">{p.title}</div>
               <div className="paper-authors">{p.authors}</div>
