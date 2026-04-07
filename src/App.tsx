@@ -47,11 +47,11 @@ function useIsMobile(breakpoint = 640): boolean {
   return mobile
 }
 
-const PageLoader = () => <div className="page-loader">// loading...</div>
+const PageLoader = () => <div className="page-loader">{/* loading... */}</div>
 
-function navigateTo(tab: Tab, setTab: (t: Tab) => void): void {
-  setTab(tab)
-  capture('tab navigated', { tab })
+function navigateTo(targetTab: Tab, setTab: (tab: Tab) => void): void {
+  setTab(targetTab)
+  capture('tab navigated', { tab: targetTab })
 }
 
 /** Map togglable tabs to their PostHog feature flag key */
@@ -82,9 +82,7 @@ export default function App() {
   })
 
   // If the active tab gets disabled, fall back to Home
-  useEffect(() => {
-    if (!visibleTabs.includes(tab)) setTab('Home')
-  }, [visibleTabs, tab])
+  const activeTab = visibleTabs.includes(tab) ? tab : 'Home'
 
   return (
     <>
@@ -95,7 +93,7 @@ export default function App() {
           {visibleTabs.map(t => (
             <button
               key={t}
-              className={`nav-tab ${tab === t ? 'active' : ''}`}
+              className={`nav-tab ${activeTab === t ? 'active' : ''}`}
               onClick={() => navigateTo(t, setTab)}
             >
               {t}
@@ -109,9 +107,9 @@ export default function App() {
         {visibleTabs.map(t => (
           <button
             key={t}
-            className={`mobile-tab ${tab === t ? 'active' : ''}`}
+            className={`mobile-tab ${activeTab === t ? 'active' : ''}`}
             onClick={() => navigateTo(t, setTab)}
-            aria-current={tab === t ? 'page' : undefined}
+            aria-current={activeTab === t ? 'page' : undefined}
           >
             {TAB_ICONS[t]}
             <span>{t}</span>
@@ -119,7 +117,7 @@ export default function App() {
         ))}
       </nav>
 
-      {tab === 'Home' && (
+      {activeTab === 'Home' && (
         <div className="hero">
           {!isMobile && <NeuralCanvas name="Jacob Molnia" />}
           <div className="hero-content">
@@ -134,9 +132,9 @@ export default function App() {
       )}
 
       <Suspense fallback={<PageLoader />}>
-        {tab === 'Research' && showResearch && <Papers />}
-        {tab === 'Blog'     && showBlog     && <Blog />}
-        {tab === 'Resume'   && showResume   && <Resume />}
+        {activeTab === 'Research' && showResearch && <Papers />}
+        {activeTab === 'Blog'     && showBlog     && <Blog />}
+        {activeTab === 'Resume'   && showResume   && <Resume />}
       </Suspense>
     </>
   )

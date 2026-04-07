@@ -163,14 +163,14 @@ export default function Resume() {
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '2.75rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 className="page-title">Résumé</h1>
-          <p className="page-sub" style={{ marginBottom: 0 }}>// curriculum vitae</p>
+          <p className="page-sub" style={{ marginBottom: 0 }}>{'// curriculum vitae'}</p>
         </div>
         {hasPdf && (
           <a href={cdn('resume/resume.pdf')} target="_blank" rel="noreferrer" className="btn btn-primary" onClick={() => capture('resume pdf downloaded')}>↓ Download PDF</a>
         )}
       </div>
-      {!data && !missing && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// loading...</p>}
-      {missing && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// no resume found — add resume.json to R2 bucket</p>}
+      {!data && !missing && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{'// loading...'}</p>}
+      {missing && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{'// no resume found \u2014 add resume.json to R2 bucket'}</p>}
       {data && <ResumeView data={data} />}
     </div>
   )

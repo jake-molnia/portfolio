@@ -74,7 +74,7 @@ function PaperView({ paper, onClose }: { paper: Paper; onClose: () => void }) {
       </div>
 
       {error && <p style={{ color: '#f55', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{error}</p>}
-      {!error && !html && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// loading...</p>}
+      {!error && !html && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{/* loading... */}</p>}
       {html && <div className="blog-body" dangerouslySetInnerHTML={{ __html: html }} />}
     </div>
   )
@@ -118,13 +118,13 @@ export default function Papers() {
   return (
     <div className="page">
       <h1 className="page-title">Research</h1>
-      <p className="page-sub">// selected publications</p>
+      <p className="page-sub">{'// selected publications'}</p>
 
       {error && <p style={{ color: '#f55', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{error}</p>}
-      {!error && !papers && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// loading...</p>}
+      {!error && !papers && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{'// loading...'}</p>}
       {papers?.length === 0 && (
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: '2rem', color: 'var(--muted)', fontSize: '0.85rem', fontFamily: 'Syne Mono, monospace' }}>
-          // no papers yet
+          {'// no papers yet'}
         </div>
       )}
       {papers && papers.length > 0 && (

@@ -71,7 +71,7 @@ function PostView({ post, onClose }: { post: Post; onClose: () => void }) {
       </div>
 
       {error && <p style={{ color: '#f55', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{error}</p>}
-      {!error && !html && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// loading...</p>}
+      {!error && !html && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{/* loading... */}</p>}
       {html && <div className="blog-body" dangerouslySetInnerHTML={{ __html: html }} />}
     </div>
   )
@@ -115,13 +115,13 @@ export default function Blog() {
   return (
     <div className="page">
       <h1 className="page-title">Blog</h1>
-      <p className="page-sub">// notes & writing</p>
+      <p className="page-sub">{'// notes & writing'}</p>
 
       {error && <p style={{ color: '#f55', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{error}</p>}
-      {!error && !posts && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// loading...</p>}
+      {!error && !posts && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{'// loading...'}</p>}
       {posts?.length === 0 && (
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: '2rem', color: 'var(--muted)', fontSize: '0.85rem', fontFamily: 'Syne Mono, monospace' }}>
-          // no posts yet
+          {'// no posts yet'}
         </div>
       )}
       {posts && posts.length > 0 && (
