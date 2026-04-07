@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { cdn } from './cdn'
+import { fetchCdn } from './cdn'
 import { capture } from './posthog'
 
 interface Paper {
@@ -17,11 +17,8 @@ export default function Papers() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch(cdn('papers/index.json'))
-      .then(r => {
-        if (!r.ok) throw new Error(`Could not load papers/index.json (${r.status})`)
-        return r.json()
-      })
+    fetchCdn('papers/index.json')
+      .then(r => r.json())
       .then(setPapers)
       .catch((err: Error) => setError(err.message))
   }, [])

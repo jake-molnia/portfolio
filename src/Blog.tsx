@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { cdn } from './cdn'
+import { fetchCdn } from './cdn'
 import { capture } from './posthog'
 
 interface Post {
@@ -16,11 +16,8 @@ export default function Blog() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch(cdn('blog/index.json'))
-      .then(r => {
-        if (!r.ok) throw new Error(`Could not load blog/index.json (${r.status})`)
-        return r.json()
-      })
+    fetchCdn('blog/index.json')
+      .then(r => r.json())
       .then(setPosts)
       .catch((err: Error) => setError(err.message))
   }, [])

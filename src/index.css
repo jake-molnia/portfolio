@@ -18,12 +18,7 @@
   --sai-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-@font-face {
-  font-family: 'Violet Sans';
-  src: url('/fonts/VioletSans-Regular.woff2') format('woff2');
-  font-weight: 800;
-  font-display: swap;
-}
+/* Violet Sans is loaded programmatically in NeuralCanvas via the CDN */
 
 /* ── Reset ── */
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }

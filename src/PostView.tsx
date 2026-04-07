@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { marked } from 'marked'
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
-import { cdn } from './cdn'
+import { cdn, fetchCdn } from './cdn'
 import { capture } from './posthog'
 
 marked.setOptions({ breaks: true, gfm: true })
@@ -51,11 +51,8 @@ export default function PostView() {
   // Load post metadata from index
   useEffect(() => {
     if (!slug) return
-    fetch(cdn('blog/index.json'))
-      .then(r => {
-        if (!r.ok) throw new Error(`Could not load blog index (${r.status})`)
-        return r.json()
-      })
+    fetchCdn('blog/index.json')
+      .then(r => r.json())
       .then((posts: Post[]) => {
         const found = posts.find(p => p.slug === slug)
         if (found) {
@@ -71,11 +68,8 @@ export default function PostView() {
   // Load post content
   useEffect(() => {
     if (!slug) return
-    fetch(cdn(`blog/${slug}/content.md`))
-      .then(r => {
-        if (!r.ok) throw new Error(`Could not load post (${r.status})`)
-        return r.text()
-      })
+    fetchCdn(`blog/${slug}/content.md`)
+      .then(r => r.text())
       .then(md => setHtml(renderWithMath(md, slug)))
       .catch((err: Error) => setError(err.message))
   }, [slug])

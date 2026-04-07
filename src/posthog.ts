@@ -1,53 +1,93 @@
-import posthog from 'posthog-js'
 import { useState, useEffect } from 'react'
 
 const key  = import.meta.env.VITE_POSTHOG_KEY as string | undefined
 const host = import.meta.env.VITE_POSTHOG_HOST as string | undefined
 
+// Minimal interface — avoids importing the full posthog-js bundle at load time
+interface PH {
+  init(key: string, opts: Record<string, unknown>): void
+  capture(event: string, properties?: Record<string, unknown>): void
+  onFeatureFlags(cb: () => void): void
+  getFeatureFlag(flag: string): string | boolean | undefined
+}
+
+// ── Lazy-load PostHog so it stays out of the critical bundle ──
+let instance: PH | null = null
+const waiting: Array<(ph: PH) => void> = []
+
 if (key) {
-  posthog.init(key, {
-    api_host: host || 'https://us.i.posthog.com',
-    autocapture: false,
-    capture_pageview: false,
-    persistence: 'localStorage',
+  import('posthog-js').then(({ default: posthog }) => {
+    posthog.init(key, {
+      api_host: host || 'https://us.i.posthog.com',
+      autocapture: false,
+      capture_pageview: false,
+      persistence: 'localStorage',
+    })
+    instance = posthog
+    for (const cb of waiting) cb(posthog)
+    waiting.length = 0
   })
 }
 
+function onReady(cb: (ph: PH) => void): void {
+  if (instance) cb(instance)
+  else waiting.push(cb)
+}
+
 export function capture(event: string, properties?: Record<string, unknown>): void {
-  if (key) posthog.capture(event, properties)
+  if (key) onReady(ph => ph.capture(event, properties))
 }
 
 export function captureException(error: unknown, properties?: Record<string, unknown>): void {
-  if (key) posthog.capture('$exception', { ...properties, $exception_message: String(error) })
+  if (key) onReady(ph => ph.capture('$exception', { ...properties, $exception_message: String(error) }))
+}
+
+// ── Flag cache — stale-while-revalidate in localStorage ──
+const FLAG_CACHE_KEY = 'ph_flag_cache'
+
+function readCache(): Record<string, boolean> {
+  try {
+    return JSON.parse(localStorage.getItem(FLAG_CACHE_KEY) || '{}')
+  } catch {
+    return {}
+  }
+}
+
+function writeCache(flag: string, value: boolean): void {
+  try {
+    const cache = readCache()
+    cache[flag] = value
+    localStorage.setItem(FLAG_CACHE_KEY, JSON.stringify(cache))
+  } catch { /* quota exceeded — ignore */ }
 }
 
 /**
  * React hook for PostHog feature flags.
- * Returns `defaultValue` when PostHog isn't configured or the flag doesn't exist.
+ *
+ * Uses a stale-while-revalidate strategy:
+ *   1st visit  — no cache, uses `defaultValue` (true) until PostHog responds
+ *   2nd+ visit — reads the cached value from localStorage (instant), then
+ *                revalidates from PostHog in the background
  *
  * Uses `getFeatureFlag` (not `isFeatureEnabled`) so we can distinguish
  * "flag explicitly disabled" (`false`) from "flag unknown" (`undefined`).
- * Unknown flags keep the default — the site never breaks because of a
- * missing or newly-created flag.
  */
 export function useFeatureFlag(flag: string, defaultValue = true): boolean {
-  const [enabled, setEnabled] = useState(defaultValue)
+  const cached = readCache()[flag]
+  const [enabled, setEnabled] = useState(cached ?? defaultValue)
 
   useEffect(() => {
-    // No PostHog configured → keep default (everything visible)
     if (!key) return
 
-    // Once flags load from PostHog, we have a definitive answer:
-    //   flag present  → use its value (true/false)
-    //   flag absent   → disabled in PostHog dashboard → false
-    // Before this fires, state stays at `defaultValue` (true) to avoid FOUC.
-    posthog.onFeatureFlags(() => {
-      const val = posthog.getFeatureFlag(flag)
-      setEnabled(val !== undefined ? Boolean(val) : false)
+    onReady(ph => {
+      ph.onFeatureFlags(() => {
+        const val = ph.getFeatureFlag(flag)
+        const resolved = val !== undefined ? Boolean(val) : false
+        setEnabled(resolved)
+        writeCache(flag, resolved)
+      })
     })
-  }, [flag, defaultValue])
+  }, [flag])
 
   return enabled
 }
-
-export default posthog
