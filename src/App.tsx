@@ -104,7 +104,7 @@ export default function App() {
     <>
       {/* Desktop top nav */}
       <nav className="nav">
-        <NavLink to="/" className="nav-logo" style={{ textDecoration: 'none', color: 'inherit' }}>JRM</NavLink>
+        <NavLink to="/" className="nav-logo">JRM</NavLink>
         <div className="nav-tabs">
           {visibleTabs.map(t => (
             <NavLink
