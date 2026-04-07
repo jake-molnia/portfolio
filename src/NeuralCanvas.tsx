@@ -234,7 +234,10 @@ export default function NeuralCanvas({ name = 'Jacob Molnia' }: NeuralCanvasProp
     const ro = new ResizeObserver(() => { resize(); init() })
     ro.observe(canvas.parentElement!)
     resize()
-    document.fonts.load("800 72px 'Violet Sans'").then(() => { init(); start() })
+    // Start as soon as Violet Sans loads, or after 1s fallback to sans-serif
+    const fontReady = document.fonts.load("800 72px 'Violet Sans'")
+    const timeout   = new Promise<void>(r => setTimeout(r, 1000))
+    Promise.race([fontReady, timeout]).then(() => { init(); start() })
 
     document.addEventListener('visibilitychange', onVisibility)
     canvas.addEventListener('mousemove', onMouse)
