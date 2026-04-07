@@ -1,14 +1,22 @@
-import { useState, useEffect, lazy, Suspense, type ReactNode } from 'react'
+import { useState, lazy, Suspense, useEffect, type ReactNode } from 'react'
+import { Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import NeuralCanvas from './NeuralCanvas'
 import { capture, useFeatureFlag } from './posthog'
 
-const Papers = lazy(() => import('./Papers'))
-const Resume = lazy(() => import('./Resume'))
-const Blog   = lazy(() => import('./Blog'))
+const Papers   = lazy(() => import('./Papers'))
+const PaperView = lazy(() => import('./PaperView'))
+const Resume   = lazy(() => import('./Resume'))
+const Blog     = lazy(() => import('./Blog'))
+const PostView = lazy(() => import('./PostView'))
 
 type Tab = 'Home' | 'Research' | 'Blog' | 'Resume'
 
-const TABS: Tab[] = ['Home', 'Research', 'Blog', 'Resume']
+const TAB_ROUTES: Record<Tab, string> = {
+  Home:     '/',
+  Research: '/research',
+  Blog:     '/blog',
+  Resume:   '/resume',
+}
 
 const TAB_ICONS: Record<Tab, ReactNode> = {
   Home: (
@@ -36,6 +44,8 @@ const TAB_ICONS: Record<Tab, ReactNode> = {
   ),
 }
 
+const TABS: Tab[] = ['Home', 'Research', 'Blog', 'Resume']
+
 function useIsMobile(breakpoint = 640): boolean {
   const [mobile, setMobile] = useState(() => window.innerWidth < breakpoint)
   useEffect(() => {
@@ -49,11 +59,6 @@ function useIsMobile(breakpoint = 640): boolean {
 
 const PageLoader = () => <div className="page-loader">{/* loading... */}</div>
 
-function navigateTo(targetTab: Tab, setTab: (tab: Tab) => void): void {
-  setTab(targetTab)
-  capture('tab navigated', { tab: targetTab })
-}
-
 /** Map togglable tabs to their PostHog feature flag key */
 const TAB_FLAGS: Partial<Record<Tab, string>> = {
   Research: 'show-research',
@@ -61,9 +66,18 @@ const TAB_FLAGS: Partial<Record<Tab, string>> = {
   Resume:   'show-resume',
 }
 
+function activeTabFromPath(pathname: string): Tab {
+  if (pathname.startsWith('/research')) return 'Research'
+  if (pathname.startsWith('/blog'))     return 'Blog'
+  if (pathname.startsWith('/resume'))   return 'Resume'
+  return 'Home'
+}
+
 export default function App() {
-  const [tab, setTab] = useState<Tab>('Home')
+  const location = useLocation()
+  const navigate = useNavigate()
   const isMobile = useIsMobile()
+  const activeTab = activeTabFromPath(location.pathname)
 
   // Feature flags — default true so everything shows without PostHog
   const showResearch = useFeatureFlag('show-research')
@@ -81,23 +95,26 @@ export default function App() {
     return !flag || flagMap[flag]
   })
 
-  // If the active tab gets disabled, fall back to Home
-  const activeTab = visibleTabs.includes(tab) ? tab : 'Home'
+  // Track page views on route change
+  useEffect(() => {
+    capture('$pageview', { path: location.pathname })
+  }, [location.pathname])
 
   return (
     <>
       {/* Desktop top nav */}
       <nav className="nav">
-        <span className="nav-logo">JRM</span>
+        <NavLink to="/" className="nav-logo">JRM</NavLink>
         <div className="nav-tabs">
           {visibleTabs.map(t => (
-            <button
+            <NavLink
               key={t}
+              to={TAB_ROUTES[t]}
               className={`nav-tab ${activeTab === t ? 'active' : ''}`}
-              onClick={() => navigateTo(t, setTab)}
+              onClick={() => capture('tab navigated', { tab: t })}
             >
               {t}
-            </button>
+            </NavLink>
           ))}
         </div>
       </nav>
@@ -105,36 +122,40 @@ export default function App() {
       {/* Mobile bottom nav */}
       <nav className="mobile-nav" aria-label="Main navigation">
         {visibleTabs.map(t => (
-          <button
+          <NavLink
             key={t}
+            to={TAB_ROUTES[t]}
             className={`mobile-tab ${activeTab === t ? 'active' : ''}`}
-            onClick={() => navigateTo(t, setTab)}
             aria-current={activeTab === t ? 'page' : undefined}
+            onClick={() => capture('tab navigated', { tab: t })}
           >
             {TAB_ICONS[t]}
             <span>{t}</span>
-          </button>
+          </NavLink>
         ))}
       </nav>
 
-      {activeTab === 'Home' && (
-        <div className="hero">
-          {!isMobile && <NeuralCanvas name="Jacob Molnia" />}
-          <div className="hero-content">
-            {isMobile && <h1 className="hero-name">Jacob Molnia</h1>}
-            <div className="hero-role">Deep Learning and Optimization</div>
-            <div style={{ marginTop: 'clamp(1.5rem, 3vw, 2.5rem)', display: 'flex', gap: 'clamp(0.5rem, 2vw, 0.75rem)', justifyContent: 'center', flexWrap: 'wrap' }}>
-              {showResearch && <button className="btn btn-primary" onClick={() => { capture('research cta clicked'); navigateTo('Research', setTab) }}>View Research →</button>}
-              {showResume && <button className="btn btn-ghost" onClick={() => { capture('resume cta clicked'); navigateTo('Resume', setTab) }}>Résumé</button>}
-            </div>
-          </div>
-        </div>
-      )}
-
       <Suspense fallback={<PageLoader />}>
-        {activeTab === 'Research' && showResearch && <Papers />}
-        {activeTab === 'Blog'     && showBlog     && <Blog />}
-        {activeTab === 'Resume'   && showResume   && <Resume />}
+        <Routes>
+          <Route path="/" element={
+            <div className="hero">
+              {!isMobile && <NeuralCanvas name="Jacob Molnia" />}
+              <div className="hero-content">
+                {isMobile && <h1 className="hero-name">Jacob Molnia</h1>}
+                <div className="hero-role">Deep Learning and Optimization</div>
+                <div style={{ marginTop: 'clamp(1.5rem, 3vw, 2.5rem)', display: 'flex', gap: 'clamp(0.5rem, 2vw, 0.75rem)', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  {showResearch && <button className="btn btn-primary" onClick={() => { capture('research cta clicked'); navigate('/research') }}>View Research →</button>}
+                  {showResume && <button className="btn btn-ghost" onClick={() => { capture('resume cta clicked'); navigate('/resume') }}>Résumé</button>}
+                </div>
+              </div>
+            </div>
+          } />
+          {showResearch && <Route path="/research" element={<Papers />} />}
+          {showResearch && <Route path="/research/:id" element={<PaperView />} />}
+          {showBlog && <Route path="/blog" element={<Blog />} />}
+          {showBlog && <Route path="/blog/:slug" element={<PostView />} />}
+          {showResume && <Route path="/resume" element={<Resume />} />}
+        </Routes>
       </Suspense>
     </>
   )

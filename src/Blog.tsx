@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react'
-import { marked } from 'marked'
-import katex from 'katex'
-import 'katex/dist/katex.min.css'
-import { cdn, fetchCdn } from './cdn'
+import { Link } from 'react-router-dom'
+import { fetchCdn } from './cdn'
 import { capture } from './posthog'
-
-marked.setOptions({ breaks: true, gfm: true })
 
 interface Post {
   slug: string
@@ -15,86 +11,9 @@ interface Post {
   tags?: string[]
 }
 
-function renderWithMath(md: string, slug: string): string {
-  const blocks: string[] = []
-  const inlines: string[] = []
-
-  md = md.replace(/\$\$([\s\S]*?)\$\$/g, (_, expr: string) => {
-    const key = `XMATHBLOCKX${blocks.length}X`
-    try { blocks.push(katex.renderToString(expr.trim(), { displayMode: true, throwOnError: false })) }
-    catch { blocks.push(`<code>${expr}</code>`) }
-    return key
-  })
-
-  md = md.replace(/\$([^$\n]+?)\$/g, (_, expr: string) => {
-    const key = `XMATHINLINEX${inlines.length}X`
-    try { inlines.push(katex.renderToString(expr.trim(), { displayMode: false, throwOnError: false })) }
-    catch { inlines.push(`<code>${expr}</code>`) }
-    return key
-  })
-
-  let html = marked.parse(md) as string
-  html = html.replace(/XMATHBLOCKX(\d+)X/g, (_, i: string) => `<div class="math-block">${blocks[+i]}</div>`)
-  html = html.replace(/XMATHINLINEX(\d+)X/g, (_, i: string) => inlines[+i])
-  html = html.replace(/src="(?!https?:\/\/|\/)(.*?)"/g, `src="${cdn(`blog/${slug}/$1`)}"`)
-  return html
-}
-
-function PostView({ post, onClose }: { post: Post; onClose: () => void }) {
-  const [html, setHtml] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetchCdn(`blog/${post.slug}/content.md`)
-      .then(r => r.text())
-      .then(md => setHtml(renderWithMath(md, post.slug)))
-      .catch((err: Error) => setError(err.message))
-  }, [post.slug])
-
-  return (
-    <div className="page">
-      <button onClick={onClose} style={{
-        background: 'none', border: '1px solid var(--border)', color: 'var(--muted)',
-        cursor: 'pointer', padding: '0.3rem 0.8rem', fontSize: '0.75rem',
-        fontFamily: 'Syne Mono, monospace', marginBottom: '2rem', letterSpacing: '0.08em'
-      }}>← back</button>
-
-      <div style={{ marginBottom: '2.5rem' }}>
-        <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', marginBottom: '0.5rem' }}>
-          {post.date}{post.tags?.length ? ` · ${post.tags.join(', ')}` : ''}
-        </div>
-        <h1 style={{ fontSize: '1.6rem', fontWeight: 700, lineHeight: 1.3, marginBottom: '0.6rem' }}>{post.title}</h1>
-        {post.description && <p style={{ fontSize: '0.9rem', color: 'var(--muted)', lineHeight: 1.7 }}>{post.description}</p>}
-      </div>
-
-      {error && <p style={{ color: '#f55', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{error}</p>}
-      {!error && !html && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{/* loading... */}</p>}
-      {html && <div className="blog-body" dangerouslySetInnerHTML={{ __html: html }} />}
-    </div>
-  )
-}
-
 export default function Blog() {
   const [posts, setPosts] = useState<Post[] | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [activeSlug, setActiveSlug] = useState<string | null>(() => {
-    const h = window.location.hash
-    return h.startsWith('#blog/') ? h.slice(6) : null
-  })
-
-  useEffect(() => {
-    if (activeSlug) window.location.hash = `blog/${activeSlug}`
-    else if (window.location.hash.startsWith('#blog/')) history.replaceState(null, '', ' ')
-  }, [activeSlug])
-
-  useEffect(() => {
-    const onHash = () => {
-      const h = window.location.hash
-      setActiveSlug(h.startsWith('#blog/') ? h.slice(6) : null)
-    }
-    window.addEventListener('hashchange', onHash)
-    return () => window.removeEventListener('hashchange', onHash)
-  }, [])
 
   useEffect(() => {
     fetchCdn('blog/index.json')
@@ -102,9 +21,6 @@ export default function Blog() {
       .then(setPosts)
       .catch((err: Error) => setError(err.message))
   }, [])
-
-  const activePost = posts?.find(p => p.slug === activeSlug) ?? null
-  if (activePost) return <PostView post={activePost} onClose={() => { capture('blog post closed', { slug: activePost.slug, title: activePost.title }); setActiveSlug(null) }} />
 
   return (
     <div className="page">
@@ -121,12 +37,12 @@ export default function Blog() {
       {posts && posts.length > 0 && (
         <div className="paper-list">
           {posts.map(p => (
-            <div key={p.slug} className="paper-item" onClick={() => { capture('blog post opened', { slug: p.slug, title: p.title, tags: p.tags }); setActiveSlug(p.slug) }}>
+            <Link key={p.slug} to={`/blog/${p.slug}`} className="paper-item" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => capture('blog post opened', { slug: p.slug, title: p.title, tags: p.tags })}>
               <div className="paper-meta">{p.date}{p.tags?.length ? ` · ${p.tags.join(', ')}` : ''}</div>
               <div className="paper-title">{p.title}</div>
               {p.description && <p className="paper-abstract">{p.description}</p>}
               <div className="paper-read">Read post →</div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
