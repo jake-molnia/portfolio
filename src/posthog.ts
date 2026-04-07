@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const key  = import.meta.env.VITE_POSTHOG_KEY as string | undefined
-const host = import.meta.env.VITE_POSTHOG_HOST as string | undefined
+const key = import.meta.env.VITE_POSTHOG_KEY as string | undefined
 
 // Minimal interface — avoids importing the full posthog-js bundle at load time
 interface PH {
@@ -18,7 +17,10 @@ const waiting: Array<(ph: PH) => void> = []
 if (key) {
   import('posthog-js').then(({ default: posthog }) => {
     posthog.init(key, {
-      api_host: host || 'https://us.i.posthog.com',
+      api_host: 'https://m.molnia.net',
+      ui_host: 'https://us.posthog.com',
+      defaults: '2026-01-30',
+      person_profiles: 'identified_only',
       autocapture: false,
       capture_pageview: false,
       capture_pageleave: true,
