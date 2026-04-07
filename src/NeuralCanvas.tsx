@@ -234,7 +234,7 @@ export default function NeuralCanvas({ name = 'Jacob Molnia' }: NeuralCanvasProp
     const ro = new ResizeObserver(() => { resize(); init() })
     ro.observe(canvas.parentElement!)
     resize()
-    document.fonts.ready.then(() => { init(); start() })
+    document.fonts.load("800 72px 'Violet Sans'").then(() => { init(); start() })
 
     document.addEventListener('visibilitychange', onVisibility)
     canvas.addEventListener('mousemove', onMouse)

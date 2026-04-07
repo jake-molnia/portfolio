@@ -1,24 +1,45 @@
-import posthog from 'posthog-js'
 import { useState, useEffect } from 'react'
 
 const key  = import.meta.env.VITE_POSTHOG_KEY as string | undefined
 const host = import.meta.env.VITE_POSTHOG_HOST as string | undefined
 
+// Minimal interface — avoids importing the full posthog-js bundle at load time
+interface PH {
+  init(key: string, opts: Record<string, unknown>): void
+  capture(event: string, properties?: Record<string, unknown>): void
+  onFeatureFlags(cb: () => void): void
+  getFeatureFlag(flag: string): string | boolean | undefined
+}
+
+// ── Lazy-load PostHog so it stays out of the critical bundle ──
+let instance: PH | null = null
+const waiting: Array<(ph: PH) => void> = []
+
 if (key) {
-  posthog.init(key, {
-    api_host: host || 'https://us.i.posthog.com',
-    autocapture: false,
-    capture_pageview: false,
-    persistence: 'localStorage',
+  import('posthog-js').then(({ default: posthog }) => {
+    posthog.init(key, {
+      api_host: host || 'https://us.i.posthog.com',
+      autocapture: false,
+      capture_pageview: false,
+      persistence: 'localStorage',
+    })
+    instance = posthog
+    for (const cb of waiting) cb(posthog)
+    waiting.length = 0
   })
 }
 
+function onReady(cb: (ph: PH) => void): void {
+  if (instance) cb(instance)
+  else waiting.push(cb)
+}
+
 export function capture(event: string, properties?: Record<string, unknown>): void {
-  if (key) posthog.capture(event, properties)
+  if (key) onReady(ph => ph.capture(event, properties))
 }
 
 export function captureException(error: unknown, properties?: Record<string, unknown>): void {
-  if (key) posthog.capture('$exception', { ...properties, $exception_message: String(error) })
+  if (key) onReady(ph => ph.capture('$exception', { ...properties, $exception_message: String(error) }))
 }
 
 /**
@@ -34,20 +55,20 @@ export function useFeatureFlag(flag: string, defaultValue = true): boolean {
   const [enabled, setEnabled] = useState(defaultValue)
 
   useEffect(() => {
-    // No PostHog configured → keep default (everything visible)
+    // No PostHog configured -> keep default (everything visible)
     if (!key) return
 
-    // Once flags load from PostHog, we have a definitive answer:
-    //   flag present  → use its value (true/false)
-    //   flag absent   → disabled in PostHog dashboard → false
-    // Before this fires, state stays at `defaultValue` (true) to avoid FOUC.
-    posthog.onFeatureFlags(() => {
-      const val = posthog.getFeatureFlag(flag)
-      setEnabled(val !== undefined ? Boolean(val) : false)
+    onReady(ph => {
+      // Once flags load from PostHog, we have a definitive answer:
+      //   flag present  -> use its value (true/false)
+      //   flag absent   -> disabled in PostHog dashboard -> false
+      // Before this fires, state stays at `defaultValue` (true) to avoid FOUC.
+      ph.onFeatureFlags(() => {
+        const val = ph.getFeatureFlag(flag)
+        setEnabled(val !== undefined ? Boolean(val) : false)
+      })
     })
   }, [flag, defaultValue])
 
   return enabled
 }
-
-export default posthog
