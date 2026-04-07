@@ -3,37 +3,46 @@ import { marked } from 'marked'
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { cdn } from './cdn'
+import { capture } from './posthog'
 
 marked.setOptions({ breaks: true, gfm: true })
 
-function renderWithMath(md, slug) {
-  const blocks = []
-  const inlines = []
+interface Post {
+  slug: string
+  title: string
+  date: string
+  description?: string
+  tags?: string[]
+}
 
-  md = md.replace(/\$\$([\s\S]*?)\$\$/g, (_, expr) => {
+function renderWithMath(md: string, slug: string): string {
+  const blocks: string[] = []
+  const inlines: string[] = []
+
+  md = md.replace(/\$\$([\s\S]*?)\$\$/g, (_, expr: string) => {
     const key = `XMATHBLOCKX${blocks.length}X`
     try { blocks.push(katex.renderToString(expr.trim(), { displayMode: true, throwOnError: false })) }
     catch { blocks.push(`<code>${expr}</code>`) }
     return key
   })
 
-  md = md.replace(/\$([^$\n]+?)\$/g, (_, expr) => {
+  md = md.replace(/\$([^$\n]+?)\$/g, (_, expr: string) => {
     const key = `XMATHINLINEX${inlines.length}X`
     try { inlines.push(katex.renderToString(expr.trim(), { displayMode: false, throwOnError: false })) }
     catch { inlines.push(`<code>${expr}</code>`) }
     return key
   })
 
-  let html = marked.parse(md)
-  html = html.replace(/XMATHBLOCKX(\d+)X/g, (_, i) => `<div class="math-block">${blocks[i]}</div>`)
-  html = html.replace(/XMATHINLINEX(\d+)X/g, (_, i) => inlines[i])
+  let html = marked.parse(md) as string
+  html = html.replace(/XMATHBLOCKX(\d+)X/g, (_, i: string) => `<div class="math-block">${blocks[+i]}</div>`)
+  html = html.replace(/XMATHINLINEX(\d+)X/g, (_, i: string) => inlines[+i])
   html = html.replace(/src="(?!https?:\/\/|\/)(.*?)"/g, `src="${cdn(`blog/${slug}/$1`)}"`)
   return html
 }
 
-function PostView({ post, onClose }) {
-  const [html, setHtml] = useState(null)
-  const [error, setError] = useState(null)
+function PostView({ post, onClose }: { post: Post; onClose: () => void }) {
+  const [html, setHtml] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetch(cdn(`blog/${post.slug}/content.md`))
@@ -42,7 +51,7 @@ function PostView({ post, onClose }) {
         return r.text()
       })
       .then(md => setHtml(renderWithMath(md, post.slug)))
-      .catch(err => setError(err.message))
+      .catch((err: Error) => setError(err.message))
   }, [post.slug])
 
   return (
@@ -69,9 +78,9 @@ function PostView({ post, onClose }) {
 }
 
 export default function Blog() {
-  const [posts, setPosts] = useState(null)
-  const [error, setError] = useState(null)
-  const [activeSlug, setActiveSlug] = useState(() => {
+  const [posts, setPosts] = useState<Post[] | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [activeSlug, setActiveSlug] = useState<string | null>(() => {
     const h = window.location.hash
     return h.startsWith('#blog/') ? h.slice(6) : null
   })
@@ -97,11 +106,11 @@ export default function Blog() {
         return r.json()
       })
       .then(setPosts)
-      .catch(err => setError(err.message))
+      .catch((err: Error) => setError(err.message))
   }, [])
 
   const activePost = posts?.find(p => p.slug === activeSlug) ?? null
-  if (activePost) return <PostView post={activePost} onClose={() => setActiveSlug(null)} />
+  if (activePost) return <PostView post={activePost} onClose={() => { capture('blog post closed', { slug: activePost.slug, title: activePost.title }); setActiveSlug(null) }} />
 
   return (
     <div className="page">
@@ -115,10 +124,10 @@ export default function Blog() {
           // no posts yet
         </div>
       )}
-      {posts?.length > 0 && (
+      {posts && posts.length > 0 && (
         <div className="paper-list">
           {posts.map(p => (
-            <div key={p.slug} className="paper-item" onClick={() => setActiveSlug(p.slug)}>
+            <div key={p.slug} className="paper-item" onClick={() => { capture('blog post opened', { slug: p.slug, title: p.title, tags: p.tags }); setActiveSlug(p.slug) }}>
               <div className="paper-meta">{p.date}{p.tags?.length ? ` · ${p.tags.join(', ')}` : ''}</div>
               <div className="paper-title">{p.title}</div>
               {p.description && <p className="paper-abstract">{p.description}</p>}

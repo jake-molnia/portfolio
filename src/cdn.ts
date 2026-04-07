@@ -2,6 +2,6 @@
 // In production, points to your R2 public bucket URL.
 const BASE = import.meta.env.VITE_CDN_URL?.replace(/\/$/, '') ?? ''
 
-export function cdn(path) {
+export function cdn(path: string): string {
   return `${BASE}/${path.replace(/^\//, '')}`
 }

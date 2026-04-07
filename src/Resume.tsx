@@ -1,7 +1,51 @@
 import { useState, useEffect } from 'react'
 import { cdn } from './cdn'
+import { capture } from './posthog'
 
-function ResumeView({ data }) {
+interface ResumeContact {
+  phone?: string
+  email?: string
+  linkedin?: string
+  github?: string
+}
+
+interface Skill {
+  label: string
+  value: string
+}
+
+interface Education {
+  degree: string
+  dates: string
+  institution: string
+  location: string
+  items: string[]
+}
+
+interface Experience {
+  role: string
+  dates: string
+  org: string
+  location: string
+  items: string[]
+}
+
+interface Project {
+  title: string
+  desc: string
+}
+
+interface ResumeData {
+  name: string
+  contact: ResumeContact
+  skills?: Skill[]
+  honours?: string[]
+  education?: Education[]
+  experience?: Experience[]
+  projects?: Project[]
+}
+
+function ResumeView({ data }: { data: ResumeData }) {
   return (
     <div className="resume-wrapper">
       <div>
@@ -13,7 +57,7 @@ function ResumeView({ data }) {
           {data.contact.github   && <a href={`https://${data.contact.github}`}   target="_blank" rel="noreferrer">{data.contact.github}</a>}
         </div>
 
-        {data.skills?.length > 0 && (
+        {data.skills && data.skills.length > 0 && (
           <div style={{ marginTop: '2rem' }}>
             <div className="rs-label">Skills</div>
             {data.skills.map((s, i) => (
@@ -29,7 +73,7 @@ function ResumeView({ data }) {
           </div>
         )}
 
-        {data.honours?.length > 0 && (
+        {data.honours && data.honours.length > 0 && (
           <div style={{ marginTop: '2rem' }}>
             <div className="rs-label">Honours</div>
             {data.honours.map((h, i) => (
@@ -42,7 +86,7 @@ function ResumeView({ data }) {
       </div>
 
       <div>
-        {data.education?.length > 0 && (
+        {data.education && data.education.length > 0 && (
           <div className="rs">
             <div className="rs-label">Education</div>
             {data.education.map((e, i) => (
@@ -60,7 +104,7 @@ function ResumeView({ data }) {
           </div>
         )}
 
-        {data.experience?.length > 0 && (
+        {data.experience && data.experience.length > 0 && (
           <div className="rs">
             <div className="rs-label">Experience</div>
             {data.experience.map((e, i) => (
@@ -80,7 +124,7 @@ function ResumeView({ data }) {
           </div>
         )}
 
-        {data.projects?.length > 0 && (
+        {data.projects && data.projects.length > 0 && (
           <div className="rs">
             <div className="rs-label">Projects</div>
             {data.projects.map((p, i) => (
@@ -97,7 +141,7 @@ function ResumeView({ data }) {
 }
 
 export default function Resume() {
-  const [data, setData]     = useState(null)
+  const [data, setData]       = useState<ResumeData | null>(null)
   const [missing, setMissing] = useState(false)
   const [hasPdf, setHasPdf]   = useState(false)
 
@@ -122,7 +166,7 @@ export default function Resume() {
           <p className="page-sub" style={{ marginBottom: 0 }}>// curriculum vitae</p>
         </div>
         {hasPdf && (
-          <a href={cdn('resume/resume.pdf')} target="_blank" rel="noreferrer" className="btn btn-primary">↓ Download PDF</a>
+          <a href={cdn('resume/resume.pdf')} target="_blank" rel="noreferrer" className="btn btn-primary" onClick={() => capture('resume pdf downloaded')}>↓ Download PDF</a>
         )}
       </div>
       {!data && !missing && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>// loading...</p>}
