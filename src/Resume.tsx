@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { cdn } from './cdn'
+import { cdn, fetchCdn } from './cdn'
 import { capture } from './posthog'
 
 interface ResumeContact {
@@ -146,15 +146,15 @@ export default function Resume() {
   const [hasPdf, setHasPdf]   = useState(false)
 
   useEffect(() => {
-    fetch(cdn('resume/resume.json'))
-      .then(r => { if (!r.ok) throw new Error(); return r.json() })
+    fetchCdn('resume/resume.json')
+      .then(r => r.json())
       .then(setData)
       .catch(() => setMissing(true))
   }, [])
 
   useEffect(() => {
-    fetch(cdn('resume/resume.pdf'), { method: 'HEAD' })
-      .then(r => setHasPdf(r.ok))
+    fetchCdn('resume/resume.pdf', { method: 'HEAD' })
+      .then(() => setHasPdf(true))
       .catch(() => setHasPdf(false))
   }, [])
 

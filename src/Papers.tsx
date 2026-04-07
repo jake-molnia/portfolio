@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { marked } from 'marked'
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
-import { cdn } from './cdn'
+import { cdn, fetchCdn } from './cdn'
 import { capture } from './posthog'
 
 marked.setOptions({ breaks: true, gfm: true })
@@ -45,11 +45,8 @@ function PaperView({ paper, onClose }: { paper: Paper; onClose: () => void }) {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch(cdn(`papers/${paper.id}/content.md`))
-      .then(r => {
-        if (!r.ok) throw new Error(`Could not load content (${r.status})`)
-        return r.text()
-      })
+    fetchCdn(`papers/${paper.id}/content.md`)
+      .then(r => r.text())
       .then(md => setHtml(renderWithMath(md)))
       .catch((err: Error) => setError(err.message))
   }, [paper.id])
@@ -103,11 +100,8 @@ export default function Papers() {
   }, [])
 
   useEffect(() => {
-    fetch(cdn('papers/index.json'))
-      .then(r => {
-        if (!r.ok) throw new Error(`Could not load papers/index.json (${r.status})`)
-        return r.json()
-      })
+    fetchCdn('papers/index.json')
+      .then(r => r.json())
       .then(setPapers)
       .catch((err: Error) => setError(err.message))
   }, [])
