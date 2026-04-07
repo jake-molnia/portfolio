@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { cdn } from './cdn'
 
 // ── Physics ──
 const SPRING     = 0.0005
@@ -234,10 +235,15 @@ export default function NeuralCanvas({ name = 'Jacob Molnia' }: NeuralCanvasProp
     const ro = new ResizeObserver(() => { resize(); init() })
     ro.observe(canvas.parentElement!)
     resize()
-    // Start as soon as Violet Sans loads, or after 1s fallback to sans-serif
-    const fontReady = document.fonts.load("800 72px 'Violet Sans'")
-    const timeout   = new Promise<void>(r => setTimeout(r, 1000))
-    Promise.race([fontReady, timeout]).then(() => { init(); start() })
+    // Load Violet Sans from CDN, fall back to sans-serif after 2s
+    const font = new FontFace('Violet Sans', `url(${cdn('fonts/VioletSans-Regular.woff2')})`, { weight: '800' })
+    const timeout = new Promise<void>(r => setTimeout(r, 2000))
+    font.load()
+      .then(f => document.fonts.add(f))
+      .catch(() => {}) // fall back to sans-serif
+      .finally(() => { init(); start() })
+    // If font load is slow, start with fallback anyway
+    timeout.then(() => { if (!running) { init(); start() } })
 
     document.addEventListener('visibilitychange', onVisibility)
     canvas.addEventListener('mousemove', onMouse)
