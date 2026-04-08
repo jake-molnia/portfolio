@@ -4,7 +4,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Shared layout tokens (theme-agnostic) ── */
 :root {
+  --nav-h: 54px;
+  --bottom-nav-h: 56px;
+  --sai-bottom: env(safe-area-inset-bottom, 0px);
+  --font-mono: 'Ubuntu Mono', ui-monospace, monospace;
+}
+
+/* ── Dark theme (default) ── */
+:root.dark {
   --bg: #0a0a0a;
   --surface: #111111;
   --border: #1c1c1c;
@@ -13,11 +22,36 @@
   --text: #f0f0f0;
   --muted: #555;
   --muted2: #888;
-  --nav-h: 54px;
-  --bottom-nav-h: 56px;
-  --sai-bottom: env(safe-area-inset-bottom, 0px);
-  /* Monospace UI + code (Ubuntu Mono sitewide; was Syne Mono) */
-  --font-mono: 'Ubuntu Mono', ui-monospace, monospace;
+  --nav-bg: rgba(10,10,10,0.9);
+  --nav-bg-dense: rgba(10,10,10,0.92);
+  --overlay-bg: rgba(10,10,10,0.98);
+  --btn-primary-text: #0a0a0a;
+  --btn-primary-hover: #d0d0d0;
+  --btn-ghost-hover-border: #333;
+  --hero-glow: rgba(140,120,255,0.045);
+  --canvas-particle: #ffffff;
+  --scrollbar-thumb: #1c1c1c;
+}
+
+/* ── Light theme ── */
+:root.light {
+  --bg: #fafafa;
+  --surface: #f0f0f0;
+  --border: #e0e0e0;
+  --accent: #1a1a1a;
+  --accent-dim: rgba(26,26,26,0.05);
+  --text: #111111;
+  --muted: #888;
+  --muted2: #666;
+  --nav-bg: rgba(250,250,250,0.9);
+  --nav-bg-dense: rgba(250,250,250,0.92);
+  --overlay-bg: rgba(250,250,250,0.98);
+  --btn-primary-text: #fafafa;
+  --btn-primary-hover: #333;
+  --btn-ghost-hover-border: #bbb;
+  --hero-glow: rgba(140,120,255,0.06);
+  --canvas-particle: #111111;
+  --scrollbar-thumb: #ccc;
 }
 
 /* Violet Sans is loaded programmatically in NeuralCanvas via the CDN */
@@ -25,14 +59,14 @@
 /* ── Reset ── */
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body, #root { height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
-body { scrollbar-width: thin; scrollbar-color: #1c1c1c transparent; }
+body { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
 h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
 
 /* ── Top nav ── */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   height: var(--nav-h);
-  background: rgba(10,10,10,0.9);
+  background: var(--nav-bg);
   backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
   border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
@@ -51,7 +85,7 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
 .nav-tab.active { color: var(--text); }
 
 @media (max-width: 639px) {
-  .nav { justify-content: center; }
+  .nav { justify-content: space-between; }
   .nav-tabs { display: none; }
 }
 @media (min-width: 640px) {
@@ -63,7 +97,7 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
 .mobile-nav {
   display: none;
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(10,10,10,0.92);
+  background: var(--nav-bg-dense);
   backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
   border-top: 1px solid var(--border);
   align-items: stretch; justify-content: space-around;
@@ -95,7 +129,7 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
 /* Subtle radial glow behind text */
 .hero::before {
   content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background: radial-gradient(ellipse 55% 45% at 50% 47%, rgba(140,120,255,0.045) 0%, transparent 100%);
+  background: radial-gradient(ellipse 55% 45% at 50% 47%, var(--hero-glow) 0%, transparent 100%);
 }
 /* Film grain overlay */
 .hero::after {
@@ -235,7 +269,7 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
 }
 
 /* ── PDF overlay ── */
-.pdf-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(10,10,10,0.98); display: flex; flex-direction: column; animation: fadeIn 0.2s ease; }
+.pdf-overlay { position: fixed; inset: 0; z-index: 200; background: var(--overlay-bg); display: flex; flex-direction: column; animation: fadeIn 0.2s ease; }
 .pdf-header { height: 54px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 1.75rem; flex-shrink: 0; }
 .pdf-header-title { font-size: 0.82rem; color: var(--muted2); font-family: var(--font-mono); letter-spacing: 0.06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
 .pdf-header-actions { display: flex; gap: 0.5rem; }
@@ -467,10 +501,10 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
     padding-bottom: max(0.35rem, 0.65rem);
   }
 }
-.btn-primary { background: var(--text); color: #0a0a0a; }
-.btn-primary:hover { background: #d0d0d0; }
+.btn-primary { background: var(--text); color: var(--btn-primary-text); }
+.btn-primary:hover { background: var(--btn-primary-hover); }
 .btn-ghost { background: transparent; color: var(--muted2); border: 1px solid var(--border); }
-.btn-ghost:hover { color: var(--text); border-color: #333; }
+.btn-ghost:hover { color: var(--text); border-color: var(--btn-ghost-hover-border); }
 
 /* Icon-only PDF download — no ring; icon + optional hover fill */
 .pdf-download-icon {
@@ -501,6 +535,40 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
     min-height: 44px;
     padding: 0.45rem;
     margin: -0.45rem;
+  }
+}
+
+/* ── Theme toggle ── */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted2);
+  cursor: pointer;
+  transition: color 0.2s, background-color 0.2s;
+  flex-shrink: 0;
+}
+.theme-toggle:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--muted2);
+  outline-offset: 2px;
+}
+.theme-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+@media (pointer: coarse) {
+  .theme-toggle {
+    min-width: 44px;
+    min-height: 44px;
   }
 }
 

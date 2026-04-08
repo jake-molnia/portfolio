@@ -1,6 +1,7 @@
 import { useState, lazy, Suspense, useEffect, type ReactNode } from 'react'
 import { Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import NeuralCanvas from './NeuralCanvas'
+import ThemeToggle from './ThemeToggle'
 import { capture, useFeatureFlag } from './posthog'
 
 const Papers   = lazy(() => import('./Papers'))
@@ -117,6 +118,7 @@ export default function App() {
             </NavLink>
           ))}
         </div>
+        <ThemeToggle />
       </nav>
 
       {/* Mobile bottom nav */}
