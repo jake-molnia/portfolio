@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useTheme } from './ThemeContext'
 import { cdn } from './cdn'
 
 // ── Physics ──
@@ -81,6 +82,13 @@ interface NeuralCanvasProps {
 
 export default function NeuralCanvas({ name = 'Jacob Molnia' }: NeuralCanvasProps) {
   const ref = useRef<HTMLCanvasElement>(null)
+  const { resolvedTheme } = useTheme()
+  const particleColorRef = useRef(resolvedTheme === 'dark' ? '#ffffff' : '#111111')
+
+  // Update particle color ref whenever theme changes — no reinit needed
+  useEffect(() => {
+    particleColorRef.current = resolvedTheme === 'dark' ? '#ffffff' : '#111111'
+  }, [resolvedTheme])
 
   useEffect(() => {
     const canvas = ref.current!
@@ -121,7 +129,7 @@ export default function NeuralCanvas({ name = 'Jacob Molnia' }: NeuralCanvasProp
       const W = canvas.width, H = canvas.height
       const mx = mouse.x, my = mouse.y
       ctx.clearRect(0, 0, W, H)
-      ctx.fillStyle = '#fff'
+      ctx.fillStyle = particleColorRef.current
 
       // ── Background dot grid with staggered pulse + mouse spotlight ──
       const gridMouseRSq = GRID_MOUSE_R * GRID_MOUSE_R
