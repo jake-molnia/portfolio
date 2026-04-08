@@ -1,0 +1,9 @@
+[
+  {
+    "slug": "attention-reading-note",
+    "title": "Attention Is All You Need — A Reading Note",
+    "date": "2026-03-07",
+    "tags": ["ml", "transformers", "paper notes"],
+    "description": "Notes from actually reading the Transformer paper properly, not just the summaries."
+  }
+]

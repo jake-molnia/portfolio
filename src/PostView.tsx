@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { marked } from 'marked'
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
-import { cdn, fetchCdn } from './cdn'
+import ContentLoadError from './ContentLoadError'
+import { cdn, fetchCdnJson, fetchCdnText, userFacingCdnMessage } from './cdn'
 import { capture } from './posthog'
 
 marked.setOptions({ breaks: true, gfm: true })
@@ -51,27 +52,25 @@ export default function PostView() {
   // Load post metadata from index
   useEffect(() => {
     if (!slug) return
-    fetchCdn('blog/index.json')
-      .then(r => r.json())
-      .then((posts: Post[]) => {
+    fetchCdnJson<Post[]>('blog/index.json')
+      .then(posts => {
         const found = posts.find(p => p.slug === slug)
         if (found) {
           setPost(found)
           capture('blog post opened', { slug: found.slug, title: found.title, tags: found.tags })
         } else {
-          setError('Post not found')
+          setError("We couldn't find a post at this address. It may have been removed or the link is wrong.")
         }
       })
-      .catch((err: Error) => setError(err.message))
+      .catch((err: unknown) => setError(userFacingCdnMessage(err)))
   }, [slug])
 
   // Load post content
   useEffect(() => {
     if (!slug) return
-    fetchCdn(`blog/${slug}/content.md`)
-      .then(r => r.text())
+    fetchCdnText(`blog/${slug}/content.md`)
       .then(md => setHtml(renderWithMath(md, slug)))
-      .catch((err: Error) => setError(err.message))
+      .catch((err: unknown) => setError(userFacingCdnMessage(err)))
   }, [slug])
 
   const handleBack = () => {
@@ -81,15 +80,18 @@ export default function PostView() {
 
   return (
     <div className="page">
-      <button onClick={handleBack} style={{
-        background: 'none', border: '1px solid var(--border)', color: 'var(--muted)',
-        cursor: 'pointer', padding: '0.3rem 0.8rem', fontSize: '0.75rem',
-        fontFamily: 'Syne Mono, monospace', marginBottom: '2rem', letterSpacing: '0.08em'
-      }}>← back</button>
+      <div className="page-back-row">
+        <button type="button" className="page-back-btn" onClick={handleBack}>
+          <svg className="page-back-btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+          Back
+        </button>
+      </div>
 
       {post && (
         <div style={{ marginBottom: '2.5rem' }}>
-          <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', marginBottom: '0.5rem' }}>
+          <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: 'var(--muted)', fontFamily: 'var(--font-mono)', marginBottom: '0.5rem' }}>
             {post.date}{post.tags?.length ? ` · ${post.tags.join(', ')}` : ''}
           </div>
           <h1 style={{ fontSize: '1.6rem', fontWeight: 700, lineHeight: 1.3, marginBottom: '0.6rem' }}>{post.title}</h1>
@@ -97,8 +99,8 @@ export default function PostView() {
         </div>
       )}
 
-      {error && <p style={{ color: '#f55', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{error}</p>}
-      {!error && !html && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{/* loading... */}</p>}
+      {error && <ContentLoadError title="This post could not be loaded" detail={error} />}
+      {!error && !html && <p style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>{/* loading... */}</p>}
       {html && <div className="blog-body" dangerouslySetInnerHTML={{ __html: html }} />}
     </div>
   )

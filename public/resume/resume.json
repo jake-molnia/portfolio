@@ -1,0 +1,90 @@
+{
+  "name": "Jacob Raoul Molnia",
+  "contact": {
+    "phone": "+1 (703) 398 4682",
+    "email": "jacob@molnia.net",
+    "linkedin": "linkedin.com/in/jacob-molnia",
+    "github": "github.com/jake-molnia"
+  },
+  "education": [
+    {
+      "institution": "Worcester Polytechnic Institute",
+      "location": "Worcester, MA, USA",
+      "degree": "Computer Science (BS/MS); Mathematical Science (BS)",
+      "dates": "Aug 2023 - May 2027",
+      "items": [
+        "Relevant Coursework: Object-Oriented Programming, Systems Programming, Discrete Optimization, Combinatorics, Linear Algebra, Ordinary Differential Equations, Topology, Real Analysis",
+        "Relevant Graduate Coursework: Algorithms, Artificial Intelligence, Operating Systems, Machine Learning, ML DevOps, Deep Learning, Foundations of Computer Science"
+      ]
+    },
+    {
+      "institution": "Privates Gymnasium Huber (German Primary School)",
+      "location": "Munich, Bav, DE",
+      "degree": "Abitur Degree - Bavaria (German Pre-College Diploma)",
+      "dates": "Sept 2014 - June 2022",
+      "items": []
+    }
+  ],
+  "skills": [
+    { "label": "Programming Languages", "value": "C/C++, Python, golang, Rust" },
+    { "label": "Libraries and Tools",   "value": "git, torch, tensorflow, wandb, huggingface, nix, grafana, prometheus, uv, pandas, numpy, docker, JAX, kubernetes" },
+    { "label": "Languages",             "value": "German (native), English (native), Latin (basic)" },
+    { "label": "Software",              "value": "KiCad, MATLAB, Overleaf, Proxmox" }
+  ],
+  "experience": [
+    {
+      "role": "Research Assistant",
+      "org": "Professor Murai, Worcester Polytechnic Institute",
+      "location": "Worcester, MA",
+      "dates": "May 2025 - Present",
+      "items": [
+        "Active research with a focus on TSFM, LLM-Lasso, RAG, and prefix-tuning.",
+        "Developed skills in academic paper writing and standard research processes."
+      ]
+    },
+    {
+      "role": "Research Assistant",
+      "org": "Professor Paffenroth, Worcester Polytechnic Institute",
+      "location": "Worcester, MA",
+      "dates": "May 2025 - Present",
+      "items": [
+        "Active research with focus on dynamical systems, reinforcement learning, RNNs, and traditional MLPs."
+      ]
+    },
+    {
+      "role": "Undergraduate Research Assistant",
+      "org": "TMS Lab, Worcester Polytechnic Institute",
+      "location": "Worcester, MA",
+      "dates": "May 2024 - January 2025",
+      "items": [
+        "Consolidated multiple paper-specific software toolkits into a unified MATLAB framework, improving maintainability and scalability.",
+        "Implemented a comprehensive unit testing framework for CI/CD and robust software development.",
+        "Applied unit testing methodologies, version control systems, and object-oriented programming techniques."
+      ]
+    },
+    {
+      "role": "Academic Tutor & Teaching Assistant & ARC Resource Coordinator",
+      "org": "Worcester Polytechnic Institute",
+      "location": "Worcester, MA",
+      "dates": "May 2024 - Present",
+      "items": [
+        "Provide expert tutoring in advanced mathematics and computer science through the Academic Resource Center.",
+        "Serve as Teaching Assistant in the CS Department — office hours, lab sessions, grading for Software Security Engineering and AI. Create and oversee homework assignments for AI."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "title": "Traceface",
+      "desc": "Real-time facial recognition system leveraging YOLOv8 and DeepFace. Implemented parallel processing architecture achieving 15+ FPS with 97.35% accuracy on the LFW dataset, integrated with ChromaDB for efficient embedding storage."
+    },
+    {
+      "title": "Email Priority Ranking with Neural Networks",
+      "desc": "Multivariate email prioritization system using CNN ensemble and SimCSE-BERT models to classify emails into priority tiers based on sentiment and urgency scoring. Auto-labeling pipeline with BART-MNLI and VADER sentiment analysis on 500K Enron emails. Modular architecture combining urgency detection (IT tickets) and sentiment analysis (Amazon reviews) with tunable weighting parameters."
+    }
+  ],
+  "honours": [
+    "Dean's List — Worcester Polytechnic Institute",
+    "Best PLA Computer Science — Worcester Polytechnic Institute, 2024/2025"
+  ]
+}

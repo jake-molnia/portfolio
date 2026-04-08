@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
-import { cdn, fetchCdn } from './cdn'
+import { cdn, fetchCdn, fetchCdnJson } from './cdn'
+import PdfDownloadLink from './PdfDownloadLink'
+import ResumeSkills from './ResumeSkills'
 import { capture } from './posthog'
 
 interface ResumeContact {
@@ -48,44 +50,30 @@ interface ResumeData {
 function ResumeView({ data }: { data: ResumeData }) {
   return (
     <div className="resume-wrapper">
-      <div>
+      <div className="resume-sidebar">
         <div className="r-name">{data.name}</div>
-        <div className="r-contact" style={{ marginTop: '0.75rem' }}>
+        <div className="r-contact">
           {data.contact.phone    && <span>{data.contact.phone}</span>}
           {data.contact.email    && <a href={`mailto:${data.contact.email}`}>{data.contact.email}</a>}
           {data.contact.linkedin && <a href={`https://${data.contact.linkedin}`} target="_blank" rel="noreferrer">{data.contact.linkedin}</a>}
           {data.contact.github   && <a href={`https://${data.contact.github}`}   target="_blank" rel="noreferrer">{data.contact.github}</a>}
         </div>
 
-        {data.skills && data.skills.length > 0 && (
-          <div style={{ marginTop: '2rem' }}>
-            <div className="rs-label">Skills</div>
-            {data.skills.map((s, i) => (
-              <div key={i} style={{ marginBottom: '0.6rem' }}>
-                <div style={{ fontSize: '0.68rem', color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', marginBottom: '0.25rem' }}>{s.label}</div>
-                <div className="skills-grid">
-                  {s.value.split(/,\s*/).map((chip, j) => (
-                    <span key={j} className="skill-chip">{chip.trim()}</span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        {data.skills && data.skills.length > 0 && <ResumeSkills groups={data.skills} />}
 
         {data.honours && data.honours.length > 0 && (
-          <div style={{ marginTop: '2rem' }}>
+          <div className="rs rs-honours-section">
             <div className="rs-label">Honours</div>
             {data.honours.map((h, i) => (
               <div key={i} className="rs-entry">
-                <div className="rs-title" style={{ fontSize: '0.85rem' }}>{h}</div>
+                <div className="rs-honour-text">{h}</div>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      <div>
+      <div className="resume-main">
         {data.education && data.education.length > 0 && (
           <div className="rs">
             <div className="rs-label">Education</div>
@@ -97,7 +85,7 @@ function ResumeView({ data }: { data: ResumeData }) {
                 </div>
                 <div className="rs-org">{e.institution} · {e.location}</div>
                 {e.items.map((item, j) => (
-                  <div key={j} className="rs-desc" style={{ marginTop: '0.25rem' }}>— {item}</div>
+                  <div key={j} className="rs-detail">{item}</div>
                 ))}
               </div>
             ))}
@@ -114,9 +102,9 @@ function ResumeView({ data }: { data: ResumeData }) {
                   <span className="rs-date">{e.dates}</span>
                 </div>
                 <div className="rs-org">{e.org} · {e.location}</div>
-                <ul style={{ marginTop: '0.3rem', paddingLeft: '1rem' }}>
+                <ul className="rs-bullets">
                   {e.items.map((item, j) => (
-                    <li key={j} className="rs-desc" style={{ listStyle: 'disc', marginBottom: '0.15rem' }}>{item}</li>
+                    <li key={j} className="rs-desc">{item}</li>
                   ))}
                 </ul>
               </div>
@@ -129,7 +117,7 @@ function ResumeView({ data }: { data: ResumeData }) {
             <div className="rs-label">Projects</div>
             {data.projects.map((p, i) => (
               <div key={i} className="rs-entry">
-                <div className="rs-title" style={{ fontSize: '0.95rem' }}>{p.title}</div>
+                <div className="rs-project-title">{p.title}</div>
                 <div className="rs-desc">{p.desc}</div>
               </div>
             ))}
@@ -146,8 +134,7 @@ export default function Resume() {
   const [hasPdf, setHasPdf]   = useState(false)
 
   useEffect(() => {
-    fetchCdn('resume/resume.json')
-      .then(r => r.json())
+    fetchCdnJson<ResumeData>('resume/resume.json')
       .then(setData)
       .catch(() => setMissing(true))
   }, [])
@@ -160,17 +147,14 @@ export default function Resume() {
 
   return (
     <div className="page">
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '2.75rem', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <h1 className="page-title">Résumé</h1>
-          <p className="page-sub" style={{ marginBottom: 0 }}>{'// curriculum vitae'}</p>
-        </div>
+      <div className="page-header-row">
+        <h1 className="page-title">Résumé</h1>
         {hasPdf && (
-          <a href={cdn('resume/resume.pdf')} target="_blank" rel="noreferrer" className="btn btn-primary" onClick={() => capture('resume pdf downloaded')}>↓ Download PDF</a>
+          <PdfDownloadLink href={cdn('resume/resume.pdf')} label="Download résumé PDF" onClick={() => capture('resume pdf downloaded')} />
         )}
       </div>
-      {!data && !missing && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{'// loading...'}</p>}
-      {missing && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{'// no resume found \u2014 add resume.json to R2 bucket'}</p>}
+      {!data && !missing && <p className="resume-status">{'// loading...'}</p>}
+      {missing && <p className="resume-status">{'// no resume found \u2014 add resume.json to R2 bucket'}</p>}
       {data && <ResumeView data={data} />}
     </div>
   )

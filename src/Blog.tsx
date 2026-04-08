@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchCdn } from './cdn'
+import ContentLoadError from './ContentLoadError'
+import { fetchCdnJson, userFacingCdnMessage } from './cdn'
 import { capture } from './posthog'
 
 interface Post {
@@ -16,21 +17,19 @@ export default function Blog() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchCdn('blog/index.json')
-      .then(r => r.json())
+    fetchCdnJson<Post[]>('blog/index.json')
       .then(setPosts)
-      .catch((err: Error) => setError(err.message))
+      .catch((err: unknown) => setError(userFacingCdnMessage(err)))
   }, [])
 
   return (
     <div className="page">
       <h1 className="page-title">Blog</h1>
-      <p className="page-sub">{'// notes & writing'}</p>
 
-      {error && <p style={{ color: '#f55', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{error}</p>}
-      {!error && !posts && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{'// loading...'}</p>}
+      {error && <ContentLoadError title="Blog could not be loaded" detail={error} />}
+      {!error && !posts && <p style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>{'// loading...'}</p>}
       {posts?.length === 0 && (
-        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '2rem', color: 'var(--muted)', fontSize: '0.85rem', fontFamily: 'Syne Mono, monospace' }}>
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '2rem', color: 'var(--muted)', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>
           {'// no posts yet'}
         </div>
       )}

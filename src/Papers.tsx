@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchCdn } from './cdn'
+import ContentLoadError from './ContentLoadError'
+import { fetchCdnJson, userFacingCdnMessage } from './cdn'
 import { capture } from './posthog'
 
 interface Paper {
@@ -17,21 +18,19 @@ export default function Papers() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchCdn('papers/index.json')
-      .then(r => r.json())
+    fetchCdnJson<Paper[]>('papers/index.json')
       .then(setPapers)
-      .catch((err: Error) => setError(err.message))
+      .catch((err: unknown) => setError(userFacingCdnMessage(err)))
   }, [])
 
   return (
     <div className="page">
       <h1 className="page-title">Research</h1>
-      <p className="page-sub">{'// selected publications'}</p>
 
-      {error && <p style={{ color: '#f55', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{error}</p>}
-      {!error && !papers && <p style={{ color: 'var(--muted)', fontFamily: 'Syne Mono, monospace', fontSize: '0.8rem' }}>{'// loading...'}</p>}
+      {error && <ContentLoadError title="Research list could not be loaded" detail={error} />}
+      {!error && !papers && <p style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>{'// loading...'}</p>}
       {papers?.length === 0 && (
-        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '2rem', color: 'var(--muted)', fontSize: '0.85rem', fontFamily: 'Syne Mono, monospace' }}>
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '2rem', color: 'var(--muted)', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>
           {'// no papers yet'}
         </div>
       )}
