@@ -2,6 +2,7 @@ import { useState, lazy, Suspense, useEffect, type ReactNode } from 'react'
 import { Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import NeuralCanvas from './NeuralCanvas'
 import ThemeToggle from './ThemeToggle'
+import NavLogoDropdown from './NavLogoDropdown'
 import { capture, useFeatureFlag } from './posthog'
 
 const Papers   = lazy(() => import('./Papers'))
@@ -9,6 +10,8 @@ const PaperView = lazy(() => import('./PaperView'))
 const Resume   = lazy(() => import('./Resume'))
 const Blog     = lazy(() => import('./Blog'))
 const PostView = lazy(() => import('./PostView'))
+const Tools    = lazy(() => import('./Tools'))
+const ToolView = lazy(() => import('./ToolView'))
 
 type Tab = 'Home' | 'Research' | 'Blog' | 'Resume'
 
@@ -71,6 +74,7 @@ function activeTabFromPath(pathname: string): Tab {
   if (pathname.startsWith('/research')) return 'Research'
   if (pathname.startsWith('/blog'))     return 'Blog'
   if (pathname.startsWith('/resume'))   return 'Resume'
+  if (pathname.startsWith('/tools'))    return 'Home' // Tools lives under the logo dropdown, not a tab
   return 'Home'
 }
 
@@ -105,7 +109,7 @@ export default function App() {
     <>
       {/* Desktop top nav */}
       <nav className="nav">
-        <NavLink to="/" className="nav-logo">JRM</NavLink>
+        <NavLogoDropdown />
         <div className="nav-tabs">
           {visibleTabs.map(t => (
             <NavLink
@@ -135,6 +139,17 @@ export default function App() {
             <span>{t}</span>
           </NavLink>
         ))}
+        <NavLink
+          to="/tools"
+          className={`mobile-tab ${location.pathname.startsWith('/tools') ? 'active' : ''}`}
+          aria-current={location.pathname.startsWith('/tools') ? 'page' : undefined}
+          onClick={() => capture('tab navigated', { tab: 'Tools' })}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+          <span>Tools</span>
+        </NavLink>
       </nav>
 
       <Suspense fallback={<PageLoader />}>
@@ -157,6 +172,8 @@ export default function App() {
           {showBlog && <Route path="/blog" element={<Blog />} />}
           {showBlog && <Route path="/blog/:slug" element={<PostView />} />}
           {showResume && <Route path="/resume" element={<Resume />} />}
+          <Route path="/tools" element={<Tools />} />
+          <Route path="/tools/:slug" element={<ToolView />} />
         </Routes>
       </Suspense>
     </>
