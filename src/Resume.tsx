@@ -53,10 +53,42 @@ function ResumeView({ data }: { data: ResumeData }) {
       <div className="resume-sidebar">
         <div className="r-name">{data.name}</div>
         <div className="r-contact">
-          {data.contact.phone    && <span>{data.contact.phone}</span>}
-          {data.contact.email    && <a href={`mailto:${data.contact.email}`}>{data.contact.email}</a>}
-          {data.contact.linkedin && <a href={`https://${data.contact.linkedin}`} target="_blank" rel="noreferrer">{data.contact.linkedin}</a>}
-          {data.contact.github   && <a href={`https://${data.contact.github}`}   target="_blank" rel="noreferrer">{data.contact.github}</a>}
+          {data.contact.phone && (
+            <div className="r-contact-row">
+              <span className="r-contact-dt">Phone</span>
+              <span className="r-contact-dd">
+                <a href={`tel:${data.contact.phone.replace(/[^\d+]/g, '')}`}>{data.contact.phone}</a>
+              </span>
+            </div>
+          )}
+          {data.contact.email && (
+            <div className="r-contact-row">
+              <span className="r-contact-dt">Email</span>
+              <span className="r-contact-dd">
+                <a href={`mailto:${data.contact.email}`}>{data.contact.email}</a>
+              </span>
+            </div>
+          )}
+          {data.contact.linkedin && (
+            <div className="r-contact-row">
+              <span className="r-contact-dt">LinkedIn</span>
+              <span className="r-contact-dd">
+                <a href={`https://${data.contact.linkedin}`} target="_blank" rel="noreferrer">
+                  {data.contact.linkedin}
+                </a>
+              </span>
+            </div>
+          )}
+          {data.contact.github && (
+            <div className="r-contact-row">
+              <span className="r-contact-dt">GitHub</span>
+              <span className="r-contact-dd">
+                <a href={`https://${data.contact.github}`} target="_blank" rel="noreferrer">
+                  {data.contact.github}
+                </a>
+              </span>
+            </div>
+          )}
         </div>
 
         {data.skills && data.skills.length > 0 && <ResumeSkills groups={data.skills} />}
@@ -146,16 +178,35 @@ export default function Resume() {
   }, [])
 
   return (
-    <div className="page">
-      <div className="page-header-row">
-        <h1 className="page-title">Résumé</h1>
-        {hasPdf && (
-          <PdfDownloadLink href={cdn('resume/resume.pdf')} label="Download résumé PDF" onClick={() => capture('resume pdf downloaded')} />
+    <section className="section resume-page resume-editorial-page view-enter">
+      <div className="resume-hero-container">
+        <header className="resume-header">
+          <div className="resume-header-main">
+            <h1 className="section-title resume-hero-title">Résumé</h1>
+            <p className="research-intro resume-intro">
+              Interactive CV below; grab the PDF for ATS and sharing.
+              <span className="research-intro-mono"> // updated from resume.json</span>
+            </p>
+          </div>
+          {hasPdf && (
+            <div className="resume-header-actions">
+              <PdfDownloadLink
+                href={cdn('resume/resume.pdf')}
+                label="Download résumé PDF"
+                variant="editorial"
+                onClick={() => capture('resume pdf downloaded')}
+              />
+            </div>
+          )}
+        </header>
+        {!data && !missing && <p className="resume-status research-loading">{'// loading...'}</p>}
+        {missing && (
+          <p className="resume-status research-loading research-loading--spaced">
+            {'// no resume found — add resume.json (and optional resume.pdf) to the CDN bucket'}
+          </p>
         )}
+        {data && <ResumeView data={data} />}
       </div>
-      {!data && !missing && <p className="resume-status">{'// loading...'}</p>}
-      {missing && <p className="resume-status">{'// no resume found \u2014 add resume.json to R2 bucket'}</p>}
-      {data && <ResumeView data={data} />}
-    </div>
+    </section>
   )
 }

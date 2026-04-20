@@ -79,8 +79,8 @@ export default function PostView() {
   }
 
   return (
-    <div className="page">
-      <div className="page-back-row">
+    <div className="page post-detail-page view-enter">
+      <div className="page-back-row editorial-back-row">
         <button type="button" className="page-back-btn" onClick={handleBack}>
           <svg className="page-back-btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M15 18l-6-6 6-6" />
@@ -90,18 +90,19 @@ export default function PostView() {
       </div>
 
       {post && (
-        <div style={{ marginBottom: '2.5rem' }}>
-          <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: 'var(--muted)', fontFamily: 'var(--font-mono)', marginBottom: '0.5rem' }}>
-            {post.date}{post.tags?.length ? ` · ${post.tags.join(', ')}` : ''}
+        <header className="detail-header-block">
+          <div className="detail-meta">
+            {post.date}
+            {post.tags?.length ? ` · ${post.tags.join(' · ')}` : ''}
           </div>
-          <h1 style={{ fontSize: '1.6rem', fontWeight: 700, lineHeight: 1.3, marginBottom: '0.6rem' }}>{post.title}</h1>
-          {post.description && <p style={{ fontSize: '0.9rem', color: 'var(--muted)', lineHeight: 1.7 }}>{post.description}</p>}
-        </div>
+          <h1 className="detail-title">{post.title}</h1>
+          {post.description && <p className="detail-desc">{post.description}</p>}
+        </header>
       )}
 
       {error && <ContentLoadError title="This post could not be loaded" detail={error} />}
-      {!error && !html && <p style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>{/* loading... */}</p>}
-      {html && <div className="blog-body" dangerouslySetInnerHTML={{ __html: html }} />}
+      {!error && !html && <p className="research-loading">{/* loading... */}</p>}
+      {html && <div className="blog-body post-detail-body" dangerouslySetInnerHTML={{ __html: html }} />}
     </div>
   )
 }

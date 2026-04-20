@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider } from './ThemeContext'
 import './index.css'
+import './editorial.css'
 import App from './App'
 
 createRoot(document.getElementById('root')!).render(

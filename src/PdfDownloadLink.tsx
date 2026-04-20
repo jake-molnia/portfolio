@@ -13,9 +13,27 @@ interface PdfDownloadLinkProps {
   /** Shown to screen readers and as hover tooltip */
   label: string
   onClick?: () => void
+  /** `editorial` — chunky outlined pill with visible “PDF” (e.g. résumé header) */
+  variant?: 'icon' | 'editorial'
 }
 
-export default function PdfDownloadLink({ href, label, onClick }: PdfDownloadLinkProps) {
+export default function PdfDownloadLink({ href, label, onClick, variant = 'icon' }: PdfDownloadLinkProps) {
+  if (variant === 'editorial') {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noreferrer"
+        className="pdf-download-editorial"
+        aria-label={label}
+        title={label}
+        onClick={onClick}
+      >
+        <DownloadGlyph />
+        <span className="pdf-download-editorial-text">PDF</span>
+      </a>
+    )
+  }
   return (
     <a
       href={href}
